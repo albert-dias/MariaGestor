@@ -11,6 +11,7 @@ const people = [
     name: 'Jane Cooper',
     title: 'Paradigm Representative',
     role: 'Ativo',
+    price: 23.50,
     email: 'janecooper@example.com',
     telephone: '+1-202-555-0170',
     imageUrl:
@@ -20,6 +21,7 @@ const people = [
     name: 'Jane Cooper',
     title: 'Paradigm Representative',
     role: 'Inativo',
+    price: 23.50,
     email: 'janecooper@example.com',
     telephone: '+1-202-555-0170',
     imageUrl:
@@ -29,6 +31,7 @@ const people = [
     name: 'Jane Cooper',
     title: 'Paradigm Representative',
     role: 'Inativo',
+    price: 23.50,
     email: 'janecooper@example.com',
     telephone: '+1-202-555-0170',
     imageUrl:
@@ -38,6 +41,7 @@ const people = [
     name: 'Jane Cooper',
     title: 'Paradigm Representative',
     role: 'Ativo',
+    price: 23.50,
     email: 'janecooper@example.com',
     telephone: '+1-202-555-0170',
     imageUrl:
@@ -47,6 +51,7 @@ const people = [
     name: 'Jane Cooper',
     title: 'Paradigm Representative',
     role: 'Ativo',
+    price: 23.50,
     email: 'janecooper@example.com',
     telephone: '+1-202-555-0170',
     imageUrl:

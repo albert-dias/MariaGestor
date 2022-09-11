@@ -2,6 +2,7 @@ import { CheckIcon, PencilSquareIcon, XMarkIcon } from '@heroicons/react/20/soli
 
 interface ItemProps{
   name: string;
+  price: string;
   title: string;
   role: string;
   email: string;
@@ -21,7 +22,7 @@ export function CardCardapio({data}: DataProps) {
         >
           <div className="flex flex-1 flex-col p-1">
             <img className="mx-auto h-32 w-full flex-shrink-0 rounded" src={data.imageUrl} alt="" />
-            <h3 className="mt-6 text-sm font-medium text-gray-900">{data.name}</h3>
+            <h3 className="mt-6 text-sm font-medium text-gray-900">{data.name} - R${data.price}</h3>
             <dl className="mt-1 flex flex-grow flex-col justify-between">
               <dt className="sr-only">Title</dt>
               <dd className="text-sm text-gray-500">{data.title}</dd>

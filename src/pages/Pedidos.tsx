@@ -1,52 +1,57 @@
 /* This example requires Tailwind CSS v2.0+ */
+import { Dialog, Transition } from '@headlessui/react'
+import { CheckIcon } from '@heroicons/react/20/solid'
+import { Fragment, useState } from 'react'
 import { CardPedidos } from '../components/CardPedido'
 import { Header } from '../components/Header'
 
 
 export default function Pedidos() {
+  const [open, setOpen] = useState(false)
+  const [openM2, setOpenM2] = useState(true)
+  const [openM3, setOpenM3] = useState(false)
+
   return (
     <>
-      <div className="min-h-full pb-4">
-        <div className="bg-gray-800 pb-32">
-          <Header />
-          <header className="py-10">
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-              <h1 className="text-3xl font-bold tracking-tight text-white">Pedidos</h1>
-            </div>
-          </header>
-        </div>
+      <Transition.Root show={open} as={Fragment}>
+        <Dialog as="div" className="relative z-10" onClose={setOpen}>
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+          </Transition.Child>
 
-        <main className="-mt-32">
-          <div className="mx-auto max-w-7xl max-h-screen px-4 pb-12 sm:px-6 gap-4 lg:grid-cols-3 lg:px-8">
-            {/* Replace with your content */}
-            <div className="grid grid-cols-1 items-start gap-4 lg:grid-cols-3 lg:gap-8">
-              {/* Left column */}
-              <div className="grid grid-cols-1 gap-4">
-                <section aria-labelledby="section-1-title">
-                  <div className="overflow-hidden sm:h-[600px] rounded-lg bg-white shadow">
-                    <div className="p-6">
-                      <CardPedidos />
-                    </div>
-                  </div>
-                </section>
-              </div>
-
-              {/* Right column */}
-              <div className="grid grid-cols-1 gap-4 lg:col-span-2">
-                <section aria-labelledby="section-2-title">
-                  <div className="overflow-hidden rounded-lg sm:h-[600px] bg-white shadow">
+          <div className="fixed inset-0 z-10 overflow-y-auto">
+            <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                enterTo="opacity-100 translate-y-0 sm:scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+                leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+              >
+                <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:min-w-[700px] max-w-7xl sm:p-6">
+                  <div className="w-full">
                     <div className="p-6">
                       <div className="w-full flex flex-col">
                         <div className='flex flex-wrap'>
                           <div className='flex w-full sm:w-1/2'>
-                            <span>Nome: </span>
+                            <span className='font-semibold'>Nome: </span>
                             <span>Albert Andrade Dias</span>
                           </div>
                           <div className='flex w-full sm:w-1/2'>
                             <span>Telefone: </span>
                             <span>(84)99231-3523</span>
                           </div>
-                          
+
                         </div>
                         <div className='pb-2'>
                           <span>Endereço: </span>
@@ -120,21 +125,238 @@ export default function Pedidos() {
                       <div className="flex w-full justify-between flex-wrap">
                         <button
                           type="submit"
-                          className="flex md:w-80 sm:mb-0 mb-4 w-full justify-center rounded-md border border-transparent bg-red-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                          className="flex sm:w-56 sm:mb-0 mb-4 w-full justify-center rounded-md border border-transparent bg-red-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-red-700 "
                         >
                           Cancelar Pedido
                         </button>
                         <button
                           type="submit"
-                          className="flex md:w-80  w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                          className="flex sm:w-56  w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700"
                         >
                           Confirmar Pedido
                         </button>
                       </div>
                     </div>
                   </div>
+
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition.Root>
+
+      <Transition.Root show={openM2} as={Fragment}>
+        <Dialog as="div" className="relative z-10" onClose={setOpenM2}>
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 z-10 overflow-y-auto">
+            <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                enterTo="opacity-100 translate-y-0 sm:scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+                leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+              >
+                <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:min-w-[700px] max-w-7xl sm:p-6">
+                  <div className="w-full">
+                    <div className="p-6">
+                      <div className="w-full flex flex-col mb-4">
+                        <div className='flex flex-wrap'>
+                          <div className='flex w-full sm:w-1/2'>
+                            <span className='font-semibold'>Nome: </span>
+                            <span>Albert Andrade Dias</span>
+                          </div>
+                          <div className='flex w-full sm:w-1/2'>
+                            <span>Telefone: </span>
+                            <span>(84)99231-3523</span>
+                          </div>
+
+                        </div>
+                        <div className='pb-2'>
+                          <span>Endereço: </span>
+                          <span>Albert Andrade Dias</span>
+                        </div>
+                        <hr />
+                        <div className='flex py-2'>
+                          <div className='w-1/2'>
+                            <span>Pedidos na loja: </span>
+                            <span>30</span>
+                          </div>
+                          <div className='w-1/2'>
+                            <span>Forma de pagamento: </span>
+                            <span>Dinheiro</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex w-full justify-end flex-wrap">
+                        {/* <button
+                          type="submit"
+                          className="flex sm:w-56 sm:mb-0 mb-4 w-full justify-center rounded-md border border-transparent bg-red-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-red-700 "
+                        >
+                          Cliente cancelou
+                        </button> */}
+                        <button
+                          type="submit"
+                          className="flex sm:w-56  w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700"
+                        >
+                          Saiu para entrega
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition.Root>
+
+      <Transition.Root show={openM3} as={Fragment}>
+        <Dialog as="div" className="relative z-10" onClose={setOpenM3}>
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 z-10 overflow-y-auto">
+            <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                enterTo="opacity-100 translate-y-0 sm:scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+                leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+              >
+                <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:min-w-[700px] max-w-7xl sm:p-6">
+                  <div className="w-full">
+                    <div className="p-6">
+                      <div className="w-full flex flex-col mb-4">
+                        <div className='flex flex-wrap'>
+                          <div className='flex w-full sm:w-1/2'>
+                            <span className='font-semibold'>Nome: </span>
+                            <span>Albert Andrade Dias</span>
+                          </div>
+                          <div className='flex w-full sm:w-1/2'>
+                            <span>Telefone: </span>
+                            <span>(84)99231-3523</span>
+                          </div>
+
+                        </div>
+                        <div className='pb-2'>
+                          <span>Endereço: </span>
+                          <span>Albert Andrade Dias</span>
+                        </div>
+                        <hr />
+                        <div className='flex py-2'>
+                          <div className='w-1/2'>
+                            <span>Pedidos na loja: </span>
+                            <span>30</span>
+                          </div>
+                          <div className='w-1/2'>
+                            <span>Forma de pagamento: </span>
+                            <span>Dinheiro</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex w-full justify-between flex-wrap">
+                        <button
+                          type="submit"
+                          className="flex sm:w-56 sm:mb-0 mb-4 w-full justify-center rounded-md border border-transparent bg-red-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-red-700 "
+                        >
+                          Cliente cancelou
+                        </button>
+                        <button
+                          type="submit"
+                          className="flex sm:w-56  w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700"
+                        >
+                          Saiu para entrega
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition.Root>
+
+
+      <div className="min-h-full pb-4">
+        <div className="bg-gray-800 pb-32">
+          <Header />
+          <header className="py-10">
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+              <h1 className="text-3xl font-bold tracking-tight text-white">Pedidos</h1>
+            </div>
+          </header>
+        </div>
+
+        <main className="-mt-32">
+          <div className="mx-auto max-w-7xl max-h-screen px-4 pb-12 sm:px-6 gap-4 lg:grid-cols-3 lg:px-8">
+            {/* Replace with your content */}
+            <div className="grid grid-cols-1 items-start gap-4 lg:grid-cols-3 lg:gap-8">
+              {/* Left column */}
+              <div className="grid grid-cols-1 gap-4">
+                <strong className='text-white'>Recebidos</strong>
+                <section aria-labelledby="section-1-title">
+                  <div className="overflow-hidden sm:h-[600px] rounded-lg bg-white shadow">
+                    <div className="p-6">
+                      <CardPedidos onClick={() => setOpen(true)} />
+                    </div>
+                  </div>
                 </section>
               </div>
+              <div className="grid grid-cols-1 gap-4">
+                <strong className='text-white'>Em preparo</strong>
+                <section aria-labelledby="section-1-title">
+                  <div className="overflow-hidden sm:h-[600px] rounded-lg bg-white shadow">
+                    <div className="p-6">
+                      <CardPedidos onClick={() => setOpenM2(true)}/>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div className="grid grid-cols-1 gap-4">
+                <strong className='text-white'>Entregador</strong>
+                <section aria-labelledby="section-1-title">
+                  <div className="overflow-hidden sm:h-[600px] rounded-lg bg-white shadow">
+                    <div className="p-6">
+                      <CardPedidos onClick={() => setOpenM3(true)}/>
+                    </div>
+                  </div>
+                </section>
+              </div>
+
+              {/* Right column */}
+
             </div>
             {/* /End replace */}
           </div>
