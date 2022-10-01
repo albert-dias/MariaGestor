@@ -1,7 +1,9 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from "../hook/auth";
-import Cardapio from '../pages/Cardapio';
-import Pedidos from '../pages/Pedidos';
+import { Cardapio } from '../pages/Cardapio';
+import { Home } from '../pages/Home';
+import { Pedidos } from '../pages/Pedidos';
+import { Settings } from '../pages/Settings';
 import SignIn from '../pages/SignIn';
 
 const Routers: React.FC = () => {
@@ -20,8 +22,10 @@ const Routers: React.FC = () => {
     <BrowserRouter basename='/'>
       <Routes>
         <Route path="/" element={<SignIn />} /> 
+        <Route path="/home" element={<RequireAuth><Home /></RequireAuth>} />
         <Route path="/pedidos" element={<RequireAuth><Pedidos /></RequireAuth>} />
         <Route path="/cardapio" element={<RequireAuth><Cardapio /></RequireAuth>} />
+        <Route path="/config" element={<RequireAuth><Settings /></RequireAuth>} />
       </Routes>
       
     </BrowserRouter>

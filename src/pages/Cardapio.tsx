@@ -1,68 +1,61 @@
 /* This example requires Tailwind CSS v2.0+ */
 import { Dialog, Transition } from '@headlessui/react';
 import { CheckIcon, PlusIcon } from '@heroicons/react/20/solid';
-import { Fragment, useCallback, useMemo, useState } from 'react';
+import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import { CardCardapio } from '../components/CardCardapio';
 import { CardPedidos } from '../components/CardPedido'
 import { Header } from '../components/Header';
+import api from '../services/api';
+import { maskCurrency, maskPrice } from '../utils/masks';
 
-const people = [
-  {
-    name: 'Jane Cooper',
-    title: 'Paradigm Representative',
-    role: 'Ativo',
-    price: 23.50,
-    email: 'janecooper@example.com',
-    telephone: '+1-202-555-0170',
-    imageUrl:
-      'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=4&w=256&h=256&q=60',
-  },
-  {
-    name: 'Jane Cooper',
-    title: 'Paradigm Representative',
-    role: 'Inativo',
-    price: 23.50,
-    email: 'janecooper@example.com',
-    telephone: '+1-202-555-0170',
-    imageUrl:
-      'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=4&w=256&h=256&q=60',
-  },
-  {
-    name: 'Jane Cooper',
-    title: 'Paradigm Representative',
-    role: 'Inativo',
-    price: 23.50,
-    email: 'janecooper@example.com',
-    telephone: '+1-202-555-0170',
-    imageUrl:
-      'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=4&w=256&h=256&q=60',
-  },
-  {
-    name: 'Jane Cooper',
-    title: 'Paradigm Representative',
-    role: 'Ativo',
-    price: 23.50,
-    email: 'janecooper@example.com',
-    telephone: '+1-202-555-0170',
-    imageUrl:
-      'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=4&w=256&h=256&q=60',
-  },
-  {
-    name: 'Jane Cooper',
-    title: 'Paradigm Representative',
-    role: 'Ativo',
-    price: 23.50,
-    email: 'janecooper@example.com',
-    telephone: '+1-202-555-0170',
-    imageUrl:
-      'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=4&w=256&h=256&q=60',
-  },
-]
+interface ItemProps {
+  id: number;
+  nome: string;
+  descricao: string;
+  foto_url: string;
+  is_active: number;
+  valor: number;
+  tempo_preparo: number;
+  id_empresa: number;
+}
 
-
-export default function Cardapio() {
+export function Cardapio() {
   const [active, setActive] = useState('all');
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
+  const [nome, setNome] = useState('');
+  const [descricao, setDescricao] = useState('');
+  const [valor, setValor] = useState('');
+  const [tempoPreparo, setTempoPreparo] = useState('');
+  const [items, setItems] = useState<ItemProps[]>([]);
+
+  const loadCardapio = useCallback(async () => {
+    api.get(`/cardapios/empresa/1`).then(res => {
+      if (res.status === 200) {
+        setItems(res.data)
+      }
+    }).catch(
+      e => console.log(e)
+    )
+  }, [])
+
+  useEffect(() => {
+    loadCardapio();
+  }, [])
+
+  const handleRegisterProduct = useCallback(async () => {
+    api.post("/cardapios", {
+      id_empresa: 1,
+      nome,
+      descricao,
+      valor,
+      tempo_preparo: tempoPreparo,
+    }).catch(e => {
+      console.log(e)
+    }).finally(() => {
+      loadCardapio()
+      setOpen(false)
+    })
+  }, [nome, descricao, valor, tempoPreparo])
 
   const handleFilter = useCallback((set: string) => {
     setActive(set)
@@ -70,15 +63,16 @@ export default function Cardapio() {
 
   const filter = useMemo(() => {
     if (active === "all") {
-      return people;
+      return items;
     }
     if (active === "a") {
-      return people.filter(p => p.role === "Ativo")
+      return items.filter(p => p.is_active === 1)
+      0
     }
     else {
-      return people.filter(p => p.role !== "Ativo")
+      return items.filter(p => p.is_active === 0)
     }
-  }, [people, active])
+  }, [items, active])
 
   return (
     <>
@@ -107,19 +101,104 @@ export default function Cardapio() {
                 leaveFrom="opacity-100 translate-y-0 sm:scale-100"
                 leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
               >
-                <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-sm sm:p-6">
+                <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-slate-50 px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-sm sm:p-6">
                   <div>
-                    <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
-                      <CheckIcon className="h-6 w-6 text-green-600" aria-hidden="true" />
-                    </div>
-                    <div className="mt-3 text-center sm:mt-5">
-                      <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900">
-                        Payment successful
-                      </Dialog.Title>
-                      <div className="mt-2">
-                        <p className="text-sm text-gray-500">
-                          Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequatur amet labore.
-                        </p>
+                    <div className="sm:col-span-6">
+                      <label htmlFor="cover-photo" className="block text-sm font-medium text-gray-700">
+                        Imagem do produto
+                      </label>
+                      <div className="mt-1 flex justify-center rounded-md border-2 border-dashed border-gray-300 px-6 pt-5 pb-6">
+                        <div className="space-y-1 text-center">
+                          <svg
+                            className="mx-auto h-12 w-12 text-gray-400"
+                            stroke="currentColor"
+                            fill="none"
+                            viewBox="0 0 48 48"
+                            aria-hidden="true"
+                          >
+                            <path
+                              d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
+                              strokeWidth={2}
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                          <div className="flex text-sm text-gray-600">
+                            <label
+                              htmlFor="file-upload"
+                              className="relative cursor-pointer rounded-md bg-slate-50 font-medium text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 hover:text-indigo-500"
+                            >
+                              <span>Pesquise um arquivo</span>
+                              <input id="file-upload" name="file-upload" type="file" className="sr-only" />
+                            </label>
+                            <p className="pl-1">ou arraste e solte aqui!</p>
+                          </div>
+                          <p className="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
+                        </div>
+                      </div>
+                      <div className="mt-4">
+                        <label htmlFor="first-name" className="block text-sm font-medium text-gray-700">
+                          Nome do prato
+                        </label>
+                        <div className="mt-1 border border-gray-300 rounded-md">
+                          <input
+                            onChange={(e) => setNome(e.target.value)}
+                            value={nome}
+                            type="text"
+                            name="first-name"
+                            id="first-name"
+                            autoComplete="given-name"
+                            className="block w-full h-10 rounded-md border-gray-300 px-2"
+                          />
+                        </div>
+                      </div>
+                      <div className="mt-4">
+                        <label htmlFor="first-name" className="block text-sm font-medium text-gray-700">
+                          Descrição
+                        </label>
+                        <div className="mt-1 border border-gray-300 rounded-md">
+                          <input
+                            onChange={(e) => setDescricao(e.target.value)}
+                            value={descricao}
+                            type="text"
+                            name="first-name"
+                            id="first-name"
+                            autoComplete="given-name"
+                            className="block w-full h-10 rounded-md border-gray-300 px-2"
+                          />
+                        </div>
+                      </div>
+                      <div className="mt-4">
+                        <label htmlFor="first-name" className="block text-sm font-medium text-gray-700">
+                          Valor
+                        </label>
+                        <div className="mt-1 border border-gray-300 rounded-md">
+                          <input
+                            onChange={(e) => setValor(maskPrice(e.target.value))}
+                            value={maskCurrency(valor)}
+                            type="text"
+                            name="first-name"
+                            id="first-name"
+                            autoComplete="given-name"
+                            className="block w-full h-10 rounded-md border-gray-300 px-2"
+                          />
+                        </div>
+                      </div>
+                      <div className="mt-4">
+                        <label htmlFor="first-name" className="block text-sm font-medium text-gray-700">
+                          Tempo de preparo em minutos
+                        </label>
+                        <div className="mt-1 border border-gray-300 rounded-md">
+                          <input
+                            onChange={(e) => setTempoPreparo(e.target.value)}
+                            value={tempoPreparo}
+                            type="text"
+                            name="first-name"
+                            id="first-name"
+                            autoComplete="given-name"
+                            className="block w-full h-10 rounded-md border-gray-300 px-2"
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -127,9 +206,9 @@ export default function Cardapio() {
                     <button
                       type="button"
                       className="inline-flex w-full justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:text-sm"
-                      onClick={() => setOpen(false)}
+                      onClick={handleRegisterProduct}
                     >
-                      Go back to dashboard
+                      Salvar
                     </button>
                   </div>
                 </Dialog.Panel>
@@ -140,7 +219,7 @@ export default function Cardapio() {
       </Transition.Root>
       <div className="min-h-full pb-4">
         <div className="bg-gray-800 pb-32">
-          <Header />
+          <Header name="Cardápio" />
           <header className="py-10">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex justify-between">
               <h1 className="text-3xl font-bold tracking-tight text-white">Cardápio</h1>

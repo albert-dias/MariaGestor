@@ -9,6 +9,7 @@ interface User {
   is_adm: number;
   fullname: string;
   document: string;
+  email: string;
 }
 
 interface AuthState {
@@ -49,9 +50,13 @@ const AuthProvider = ({ children }: any) => {
 
   const verifyToken = useCallback(async() => {
     api.get("/users/me").then(res => {
+      console.log(res.status)
       if (res.status !== 200){
         signOut();
       }
+    }).catch(e => {
+      console.log(e)
+      signOut()
     })
   },[])
 

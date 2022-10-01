@@ -6,9 +6,9 @@ import { CardPedidos } from '../components/CardPedido'
 import { Header } from '../components/Header'
 
 
-export default function Pedidos() {
+export function Pedidos() {
   const [open, setOpen] = useState(false)
-  const [openM2, setOpenM2] = useState(true)
+  const [openM2, setOpenM2] = useState(false)
   const [openM3, setOpenM3] = useState(false)
 
   return (
@@ -311,7 +311,7 @@ export default function Pedidos() {
 
       <div className="min-h-full pb-4">
         <div className="bg-gray-800 pb-32">
-          <Header />
+          <Header name="Pedidos"/>
           <header className="py-10">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
               <h1 className="text-3xl font-bold tracking-tight text-white">Pedidos</h1>
@@ -335,7 +335,7 @@ export default function Pedidos() {
                 </section>
               </div>
               <div className="grid grid-cols-1 gap-4">
-                <strong className='text-white'>Em preparo</strong>
+                <strong className='sm:text-white text-zinc-700'>Em preparo</strong>
                 <section aria-labelledby="section-1-title">
                   <div className="overflow-hidden sm:h-[600px] rounded-lg bg-white shadow">
                     <div className="p-6">
@@ -345,7 +345,7 @@ export default function Pedidos() {
                 </section>
               </div>
               <div className="grid grid-cols-1 gap-4">
-                <strong className='text-white'>Entregador</strong>
+                <strong className='text-zinc-700 sm:text-white'>Em rota</strong>
                 <section aria-labelledby="section-1-title">
                   <div className="overflow-hidden sm:h-[600px] rounded-lg bg-white shadow">
                     <div className="p-6">
@@ -354,13 +354,41 @@ export default function Pedidos() {
                   </div>
                 </section>
               </div>
-
               {/* Right column */}
-
             </div>
             {/* /End replace */}
           </div>
         </main>
+        <section className="-mt-6">
+          <div className="mx-auto max-w-7xl max-h-screen px-4 pb-12 sm:px-6 gap-4 lg:grid-cols-2 lg:px-8">
+            {/* Replace with your content */}
+            <div className="grid grid-cols-1 items-start gap-4 lg:grid-cols-2 lg:gap-8">
+              {/* Left column */}
+              <div className="grid grid-cols-1 gap-4">
+                <strong className='text-zinc-700'>Finalizados</strong>
+                <section aria-labelledby="section-1-title">
+                  <div className="overflow-hidden sm:h-[600px] rounded-lg bg-white shadow">
+                    <div className="p-6">
+                      <CardPedidos onClick={() => setOpen(true)} />
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div className="grid grid-cols-1 gap-4">
+                <strong className='text-zinc-700'>Cancelados</strong>
+                <section aria-labelledby="section-1-title">
+                  <div className="overflow-hidden sm:h-[600px] rounded-lg bg-white shadow">
+                    <div className="p-6">
+                      <CardPedidos onClick={() => setOpenM2(true)}/>
+                    </div>
+                  </div>
+                </section>
+              </div>      
+              {/* Right column */}
+            </div>
+            {/* /End replace */}
+          </div>
+        </section>
       </div>
     </>
   )
