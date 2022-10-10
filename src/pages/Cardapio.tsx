@@ -1,12 +1,12 @@
 /* This example requires Tailwind CSS v2.0+ */
-import { Dialog, Transition } from '@headlessui/react';
-import { CheckIcon, PlusIcon } from '@heroicons/react/20/solid';
-import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
-import { CardCardapio } from '../components/CardCardapio';
-import { CardPedidos } from '../components/CardPedido'
-import { Header } from '../components/Header';
-import api from '../services/api';
-import { maskCurrency, maskPrice } from '../utils/masks';
+import { Dialog, Transition } from "@headlessui/react";
+import { CheckIcon, PlusIcon } from "@heroicons/react/20/solid";
+import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
+import { CardCardapio } from "../components/CardCardapio";
+import { CardPedidos } from "../components/CardPedido";
+import { Header } from "../components/Header";
+import api from "../services/api";
+import { maskCurrency, maskPrice } from "../utils/masks";
 
 interface ItemProps {
   id: number;
@@ -20,45 +20,49 @@ interface ItemProps {
 }
 
 export function Cardapio() {
-  const [active, setActive] = useState('all');
+  const [active, setActive] = useState("all");
   const [open, setOpen] = useState(false);
-  const [nome, setNome] = useState('');
-  const [descricao, setDescricao] = useState('');
-  const [valor, setValor] = useState('');
-  const [tempoPreparo, setTempoPreparo] = useState('');
+  const [nome, setNome] = useState("");
+  const [descricao, setDescricao] = useState("");
+  const [valor, setValor] = useState("");
+  const [tempoPreparo, setTempoPreparo] = useState("");
   const [items, setItems] = useState<ItemProps[]>([]);
 
   const loadCardapio = useCallback(async () => {
-    api.get(`/cardapios/empresa/1`).then(res => {
-      if (res.status === 200) {
-        setItems(res.data)
-      }
-    }).catch(
-      e => console.log(e)
-    )
-  }, [])
+    api
+      .get(`/cardapios/empresa/1`)
+      .then((res) => {
+        if (res.status === 200) {
+          setItems(res.data);
+        }
+      })
+      .catch((e) => console.log(e));
+  }, []);
 
   useEffect(() => {
     loadCardapio();
-  }, [])
+  }, []);
 
   const handleRegisterProduct = useCallback(async () => {
-    api.post("/cardapios", {
-      id_empresa: 1,
-      nome,
-      descricao,
-      valor,
-      tempo_preparo: tempoPreparo,
-    }).catch(e => {
-      console.log(e)
-    }).finally(() => {
-      loadCardapio()
-      setOpen(false)
-    })
-  }, [nome, descricao, valor, tempoPreparo])
+    api
+      .post("/cardapios", {
+        id_empresa: 1,
+        nome,
+        descricao,
+        valor,
+        tempo_preparo: tempoPreparo,
+      })
+      .catch((e) => {
+        console.log(e);
+      })
+      .finally(() => {
+        loadCardapio();
+        setOpen(false);
+      });
+  }, [nome, descricao, valor, tempoPreparo]);
 
   const handleFilter = useCallback((set: string) => {
-    setActive(set)
+    setActive(set);
   }, []);
 
   const filter = useMemo(() => {
@@ -66,13 +70,12 @@ export function Cardapio() {
       return items;
     }
     if (active === "a") {
-      return items.filter(p => p.is_active === 1)
-      0
+      return items.filter((p) => p.is_active === 1);
+      0;
+    } else {
+      return items.filter((p) => p.is_active === 0);
     }
-    else {
-      return items.filter(p => p.is_active === 0)
-    }
-  }, [items, active])
+  }, [items, active]);
 
   return (
     <>
@@ -104,7 +107,10 @@ export function Cardapio() {
                 <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-slate-50 px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-sm sm:p-6">
                   <div>
                     <div className="sm:col-span-6">
-                      <label htmlFor="cover-photo" className="block text-sm font-medium text-gray-700">
+                      <label
+                        htmlFor="cover-photo"
+                        className="block text-sm font-medium text-gray-700"
+                      >
                         Imagem do produto
                       </label>
                       <div className="mt-1 flex justify-center rounded-md border-2 border-dashed border-gray-300 px-6 pt-5 pb-6">
@@ -128,16 +134,26 @@ export function Cardapio() {
                               htmlFor="file-upload"
                               className="relative cursor-pointer rounded-md bg-slate-50 font-medium text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 hover:text-indigo-500"
                             >
-                              <span>Pesquise um arquivo</span>
-                              <input id="file-upload" name="file-upload" type="file" className="sr-only" />
+                              <span>Procure um arquivo</span>
+                              <input
+                                id="file-upload"
+                                name="file-upload"
+                                type="file"
+                                className="sr-only"
+                              />
                             </label>
                             <p className="pl-1">ou arraste e solte aqui!</p>
                           </div>
-                          <p className="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
+                          <p className="text-xs text-gray-500">
+                            PNG, JPG, GIF up to 10MB
+                          </p>
                         </div>
                       </div>
                       <div className="mt-4">
-                        <label htmlFor="first-name" className="block text-sm font-medium text-gray-700">
+                        <label
+                          htmlFor="first-name"
+                          className="block text-sm font-medium text-gray-700"
+                        >
                           Nome do prato
                         </label>
                         <div className="mt-1 border border-gray-300 rounded-md">
@@ -153,7 +169,10 @@ export function Cardapio() {
                         </div>
                       </div>
                       <div className="mt-4">
-                        <label htmlFor="first-name" className="block text-sm font-medium text-gray-700">
+                        <label
+                          htmlFor="first-name"
+                          className="block text-sm font-medium text-gray-700"
+                        >
                           Descrição
                         </label>
                         <div className="mt-1 border border-gray-300 rounded-md">
@@ -169,12 +188,17 @@ export function Cardapio() {
                         </div>
                       </div>
                       <div className="mt-4">
-                        <label htmlFor="first-name" className="block text-sm font-medium text-gray-700">
+                        <label
+                          htmlFor="first-name"
+                          className="block text-sm font-medium text-gray-700"
+                        >
                           Valor
                         </label>
                         <div className="mt-1 border border-gray-300 rounded-md">
                           <input
-                            onChange={(e) => setValor(maskPrice(e.target.value))}
+                            onChange={(e) =>
+                              setValor(maskPrice(e.target.value))
+                            }
                             value={maskCurrency(valor)}
                             type="text"
                             name="first-name"
@@ -185,7 +209,10 @@ export function Cardapio() {
                         </div>
                       </div>
                       <div className="mt-4">
-                        <label htmlFor="first-name" className="block text-sm font-medium text-gray-700">
+                        <label
+                          htmlFor="first-name"
+                          className="block text-sm font-medium text-gray-700"
+                        >
                           Tempo de preparo em minutos
                         </label>
                         <div className="mt-1 border border-gray-300 rounded-md">
@@ -222,10 +249,14 @@ export function Cardapio() {
           <Header name="Cardápio" />
           <header className="py-10">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex justify-between">
-              <h1 className="text-3xl font-bold tracking-tight text-white">Cardápio</h1>
+              <h1 className="text-3xl font-bold tracking-tight text-white">
+                Cardápio
+              </h1>
               <div>
                 <button
-                  onClick={() => { setOpen(true) }}
+                  onClick={() => {
+                    setOpen(true);
+                  }}
                   type="button"
                   className="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-full shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mr-6"
                 >
@@ -234,23 +265,41 @@ export function Cardapio() {
                 </button>
                 <span className="isolate inline-flex rounded-md shadow-sm">
                   <button
-                    onClick={() => { handleFilter("all") }}
+                    onClick={() => {
+                      handleFilter("all");
+                    }}
                     type="button"
-                    className={`relative inline-flex items-center rounded-l-md border border-gray-300 ${active === "all" ? 'bg-indigo-500 text-gray-100' : 'bg-white text-gray-700'} px-4 py-2 text-sm font-medium hover:bg-indigo-500 `}
+                    className={`relative inline-flex items-center rounded-l-md border border-gray-300 ${
+                      active === "all"
+                        ? "bg-indigo-500 text-gray-100"
+                        : "bg-white text-gray-700"
+                    } px-4 py-2 text-sm font-medium hover:bg-indigo-500 `}
                   >
                     Todos
                   </button>
                   <button
-                    onClick={() => { handleFilter("a") }}
+                    onClick={() => {
+                      handleFilter("a");
+                    }}
                     type="button"
-                    className={`relative -ml-px inline-flex items-center border border-gray-300 ${active === "a" ? 'bg-indigo-500 text-gray-100' : 'bg-white text-gray-700'} px-4 py-2 text-sm font-medium hover:bg-indigo-500 `}
+                    className={`relative -ml-px inline-flex items-center border border-gray-300 ${
+                      active === "a"
+                        ? "bg-indigo-500 text-gray-100"
+                        : "bg-white text-gray-700"
+                    } px-4 py-2 text-sm font-medium hover:bg-indigo-500 `}
                   >
                     Ativos
                   </button>
                   <button
-                    onClick={() => { handleFilter("i") }}
+                    onClick={() => {
+                      handleFilter("i");
+                    }}
                     type="button"
-                    className={`relative -ml-px inline-flex items-center rounded-r-md border border-gray-300 ${active === "i" ? 'bg-indigo-500 text-gray-100' : 'bg-white text-gray-700'} px-4 py-2 text-sm font-medium  hover:bg-indigo-500 `}
+                    className={`relative -ml-px inline-flex items-center rounded-r-md border border-gray-300 ${
+                      active === "i"
+                        ? "bg-indigo-500 text-gray-100"
+                        : "bg-white text-gray-700"
+                    } px-4 py-2 text-sm font-medium  hover:bg-indigo-500 `}
                   >
                     Inativos
                   </button>
@@ -269,14 +318,15 @@ export function Cardapio() {
                 <section aria-labelledby="section-1-title">
                   <div className="rounded-lg  bg-white shadow">
                     <div className="p-6">
-                      <ul role="list" className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-                        {filter.length > 0 ? filter.map((person) => (
-                          <CardCardapio data={person} />
-                        )) :
-                          <h1>
-                            Nenhum item para essa categoria
-                          </h1>
-                        }
+                      <ul
+                        role="list"
+                        className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
+                      >
+                        {filter.length > 0 ? (
+                          filter.map((person) => <CardCardapio data={person} />)
+                        ) : (
+                          <h1>Nenhum item para essa categoria</h1>
+                        )}
                       </ul>
                     </div>
                   </div>
@@ -288,5 +338,5 @@ export function Cardapio() {
         </main>
       </div>
     </>
-  )
+  );
 }
