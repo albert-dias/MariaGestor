@@ -1,17 +1,79 @@
 /* This example requires Tailwind CSS v2.0+ */
 import { Dialog, Transition } from "@headlessui/react";
 import { CheckIcon } from "@heroicons/react/20/solid";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { CardPedidos } from "../components/CardPedido";
 import { Header } from "../components/Header";
 import { useAuth } from "../hook/auth";
+import api from "../services/api";
+
+
+
+
+
 
 export function Pedidos() {
+
+  // const { user } = useAuth();
+
   const [open, setOpen] = useState(false);
   const [openM2, setOpenM2] = useState(false);
   const [openM3, setOpenM3] = useState(false);
+  const [listaPedidos, setListaPedidos] = useState([]);
+  const [dataM1, setDataM1] = useState({});
+  const [dataM2, setDataM2] = useState({});
+  const [dataM3, setDataM3] = useState({});
 
-  const { user } = useAuth();
+
+  useEffect(() => {
+    api.get('/pedidos').then((resp) => {
+      setListaPedidos(resp.data);
+    }).catch((err) => {
+    })
+  }, []);
+
+  function abrirModal1(pedido: any) {
+    setDataM1(pedido);
+    setOpen(true);
+  }
+
+  function abrirModal2(pedido: any) {
+    setDataM2(pedido);
+    setOpenM2(true);
+  }
+
+  function abrirModal3(pedido: any) {
+    setDataM3(pedido);
+    setOpenM3(true);
+  }
+
+  function aprovarPedido(id: number) {
+    api.post('/pedidos/status/'+id, {"status": 2}).then((resp) => {
+      // setListaPedidos(resp.data);
+    }).catch((err) => {
+    })
+  }
+
+  function entregarPedido(id: number) {
+    api.post('/pedidos/status/'+id, {"status": 3}).then((resp) => {
+      // setListaPedidos(resp.data);
+    }).catch((err) => {
+    })
+  }
+
+  function finalizarPedido(id: number) {
+    api.post('/pedidos/status/'+id, {"status": 4}).then((resp) => {
+      // setListaPedidos(resp.data);
+    }).catch((err) => {
+    })
+  }
+
+  function cancelarPedido(id: number) {
+    api.post('/pedidos/status/'+id, {"status": 5}).then((resp) => {
+      // setListaPedidos(resp.data);
+    }).catch((err) => {
+    })
+  }
 
   return (
     <>
@@ -46,17 +108,17 @@ export function Pedidos() {
                       <div className="w-full flex flex-col">
                         <div className="flex flex-wrap">
                           <div className="flex w-full sm:w-1/2">
-                            <span className="font-semibold">Nome: </span>
-                            <span>{user.name}</span>
+                            <span className="font-semibold mr-1">Nome: </span>
+                            <span> {dataM1?.cliente?.nome}</span>
                           </div>
                           <div className="flex w-full sm:w-1/2">
-                            <span>Telefone: </span>
-                            <span>(84)99231-3523</span>
+                            <span className="mr-1">Telefone: </span>
+                            <span> {` (${dataM1?.cliente?.telefone.substring(0, 2)}) ${dataM1?.cliente?.telefone.substring(2, 7)} - ${dataM1?.cliente?.telefone.substring(7, 11)}`}</span>
                           </div>
                         </div>
-                        <div className="pb-2">
+                        <div className="pb-2 mb-2">
                           <span>Endereço: </span>
-                          <span>Albert Andrade Dias</span>
+                          <span>{`${dataM1?.cliente?.logradouro}, ${dataM1?.cliente?.numero} - ${dataM1?.cliente?.bairro}`}</span>
                         </div>
                         <hr />
                         <div className="flex py-2">
@@ -66,7 +128,7 @@ export function Pedidos() {
                           </div>
                           <div className="w-1/2">
                             <span>Forma de pagamento: </span>
-                            <span>Dinheiro</span>
+                            <span>{dataM1.forma_pagamento != undefined && dataM1.forma_pagamento.descricao}</span>
                           </div>
                         </div>
                       </div>
@@ -89,39 +151,46 @@ export function Pedidos() {
                           </div>
                         </div>
 
-                        <div className="grid grid-cols-5 gap-4 border-b py-2">
-                          <div className="flex justify-center">
-                            <span className="font-medium text-zinc-900 ">
-                              1
-                            </span>
-                          </div>
-                          <div className="flex justify-center col-span-3">
-                            <span className="font-medium text-zinc-900">
-                              23 - Temaki Filadelfia
-                            </span>
-                          </div>
-                          <div className="flex justify-end ">
-                            <span className="font-medium text-zinc-900 pr-4">
-                              R$ 24,00
-                            </span>
-                          </div>
-                        </div>
+                        {dataM1.itens != undefined && dataM1?.itens.map((item, index) => {
+                          return (
+                            <div key={index} className="grid grid-cols-5 gap-4 border-b py-2">
+                              <div className="flex justify-center">
+                                <span className="font-medium text-zinc-900 ">
+                                  {item.quantidade}
+                                </span>
+                              </div>
+                              <div className="flex justify-center col-span-3">
+                                <span className="font-medium text-zinc-900">
+                                  {item.cardapio.id} - {item.cardapio.nome}
+                                </span>
+                              </div>
+                              <div className="flex justify-end ">
+                                <span className="font-medium text-zinc-900 pr-4">
+                                  R$ {item.cardapio.valor.toLocaleString('pt-br', { minimumFractionDigits: 2 })}
+                                </span>
+                              </div>
+                            </div>
+                          );
+                        })}
+
+
 
                         <div className="absolute bottom-0 right-0  h-auto w-3/5 sm:w-2/5">
                           <div className="flex justify-between">
                             <span>Total pedido: </span>
-                            <span>R$ 135,00</span>
+                            <span>{`R$ ${dataM1.total != undefined && dataM1.total.toLocaleString('pt-br', { minimumFractionDigits: 2 })}`}</span>
                           </div>
                           <div className="flex justify-between border-y">
                             <span>Taxa de entrega: </span>
-                            <span>R$ 5,00</span>
+                            <span>{`R$ ${dataM1.total != undefined && dataM1.valor_entraga.toLocaleString('pt-br', { minimumFractionDigits: 2 })}`}</span>
                           </div>
                           <div className="flex justify-between">
                             <span>Total a pagar: </span>
-                            <span>R$ 140,00</span>
+                            <span>{`R$ ${(dataM1.total != undefined && dataM1.total + dataM1.valor_entraga).toLocaleString('pt-br', { minimumFractionDigits: 2 })}`}</span>
                           </div>
                         </div>
                       </div>
+
                       <div className="flex w-full justify-between flex-wrap">
                         <button
                           type="submit"
@@ -132,6 +201,7 @@ export function Pedidos() {
                         <button
                           type="submit"
                           className="flex sm:w-56  w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700"
+                          onClick={() => aprovarPedido(dataM1.id)}
                         >
                           Confirmar Pedido
                         </button>
@@ -139,6 +209,7 @@ export function Pedidos() {
                     </div>
                   </div>
                 </Dialog.Panel>
+
               </Transition.Child>
             </div>
           </div>
@@ -176,17 +247,17 @@ export function Pedidos() {
                       <div className="w-full flex flex-col mb-4">
                         <div className="flex flex-wrap">
                           <div className="flex w-full sm:w-1/2">
-                            <span className="font-semibold">Nome: </span>
-                            <span>Albert Andrade Dias</span>
+                            <span className="font-semibold mr-1">Nome: </span>
+                            <span>{dataM2?.cliente?.nome}</span>
                           </div>
                           <div className="flex w-full sm:w-1/2">
                             <span>Telefone: </span>
-                            <span>(84)99231-3523</span>
+                            <span> {` (${dataM2?.cliente?.telefone.substring(0, 2)}) ${dataM2?.cliente?.telefone.substring(2, 7)} - ${dataM2?.cliente?.telefone.substring(7, 11)}`}</span>
                           </div>
                         </div>
                         <div className="pb-2">
                           <span>Endereço: </span>
-                          <span>Albert Andrade Dias</span>
+                          <span>{`${dataM2?.cliente?.logradouro}, ${dataM2?.cliente?.numero} - ${dataM2?.cliente?.bairro}`}</span>
                         </div>
                         <hr />
                         <div className="flex py-2">
@@ -196,7 +267,7 @@ export function Pedidos() {
                           </div>
                           <div className="w-1/2">
                             <span>Forma de pagamento: </span>
-                            <span>Dinheiro</span>
+                            <span>{dataM2.forma_pagamento != undefined && dataM2.forma_pagamento.descricao}</span>
                           </div>
                         </div>
                       </div>
@@ -211,6 +282,7 @@ export function Pedidos() {
                         <button
                           type="submit"
                           className="flex sm:w-56  w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700"
+                          onClick={() => entregarPedido(dataM2.id)}
                         >
                           Saiu para entrega
                         </button>
@@ -218,6 +290,7 @@ export function Pedidos() {
                     </div>
                   </div>
                 </Dialog.Panel>
+
               </Transition.Child>
             </div>
           </div>
@@ -255,17 +328,17 @@ export function Pedidos() {
                       <div className="w-full flex flex-col mb-4">
                         <div className="flex flex-wrap">
                           <div className="flex w-full sm:w-1/2">
-                            <span className="font-semibold">Nome: </span>
-                            <span>Albert Andrade Dias</span>
+                            <span className="font-semibold mr-3">Nome: </span>
+                            <span>{dataM3?.cliente?.nome}</span>
                           </div>
                           <div className="flex w-full sm:w-1/2">
                             <span>Telefone: </span>
-                            <span>(84)99231-3523</span>
+                            <span> {` (${dataM3?.cliente?.telefone.substring(0, 2)}) ${dataM3?.cliente?.telefone.substring(2, 7)} - ${dataM3?.cliente?.telefone.substring(7, 11)}`}</span>
                           </div>
                         </div>
                         <div className="pb-2">
                           <span>Endereço: </span>
-                          <span>Albert Andrade Dias</span>
+                          <span>{`${dataM3?.cliente?.logradouro}, ${dataM3?.cliente?.numero} - ${dataM3?.cliente?.bairro}`}</span>
                         </div>
                         <hr />
                         <div className="flex py-2">
@@ -275,7 +348,7 @@ export function Pedidos() {
                           </div>
                           <div className="w-1/2">
                             <span>Forma de pagamento: </span>
-                            <span>Dinheiro</span>
+                            <span>{dataM3.forma_pagamento != undefined &&  dataM3.forma_pagamento.descricao}</span>
                           </div>
                         </div>
                       </div>
@@ -284,14 +357,16 @@ export function Pedidos() {
                         <button
                           type="submit"
                           className="flex sm:w-56 sm:mb-0 mb-4 w-full justify-center rounded-md border border-transparent bg-red-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-red-700 "
+                          onClick={() => cancelarPedido(dataM3.id)}
                         >
                           Cliente cancelou
                         </button>
                         <button
                           type="submit"
-                          className="flex sm:w-56  w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700"
+                          className="flex sm:w-56  w-full justify-center rounded-md border border-transparent bg-green-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-green-700"
+                          onClick={() => finalizarPedido(dataM3.id)}
                         >
-                          Saiu para entrega
+                          Pedido Entregue
                         </button>
                       </div>
                     </div>
@@ -302,6 +377,8 @@ export function Pedidos() {
           </div>
         </Dialog>
       </Transition.Root>
+
+      {/* <ModalPedido open={true} info={pedido} /> */}
 
       <div className="min-h-full pb-4">
         <div className="bg-gray-800 pb-32">
@@ -325,7 +402,15 @@ export function Pedidos() {
                 <section aria-labelledby="section-1-title">
                   <div className="overflow-hidden sm:h-[600px] rounded-lg bg-white shadow">
                     <div className="p-6">
-                      <CardPedidos onClick={() => setOpen(true)} />
+                      {listaPedidos != undefined && listaPedidos.map((pedido, index) => {
+                        if (pedido.status === 1) {
+                          return (
+                            <CardPedidos dadosModal={pedido} key={index} onClick={() => abrirModal1(pedido)} />
+                          );
+                        } else {
+                          return ('');
+                        }
+                      })}
                     </div>
                   </div>
                 </section>
@@ -337,7 +422,15 @@ export function Pedidos() {
                 <section aria-labelledby="section-1-title">
                   <div className="overflow-hidden sm:h-[600px] rounded-lg bg-white shadow">
                     <div className="p-6">
-                      <CardPedidos onClick={() => setOpenM2(true)} />
+                      {listaPedidos.map((pedido, index) => {
+                        if (pedido.status === 2) {
+                          return (
+                            <CardPedidos dadosModal={pedido} key={index} onClick={() => abrirModal2(pedido)} />
+                          );
+                        } else {
+                          return ('');
+                        }
+                      })}
                     </div>
                   </div>
                 </section>
@@ -347,7 +440,15 @@ export function Pedidos() {
                 <section aria-labelledby="section-1-title">
                   <div className="overflow-hidden sm:h-[600px] rounded-lg bg-white shadow">
                     <div className="p-6">
-                      <CardPedidos onClick={() => setOpenM3(true)} />
+                      {listaPedidos.map((pedido, index) => {
+                        if (pedido.status === 3) {
+                          return (
+                            <CardPedidos dadosModal={pedido} key={index} onClick={() => abrirModal3(pedido)} />
+                          );
+                        } else {
+                          return ('');
+                        }
+                      })}
                     </div>
                   </div>
                 </section>
@@ -367,7 +468,15 @@ export function Pedidos() {
                 <section aria-labelledby="section-1-title">
                   <div className="overflow-hidden sm:h-[600px] rounded-lg bg-white shadow">
                     <div className="p-6">
-                      <CardPedidos onClick={() => setOpen(true)} />
+                      {listaPedidos.map((pedido, index) => {
+                        if (pedido.status === 4) {
+                          return (
+                            <CardPedidos dadosModal={pedido} key={index} onClick={() => abrirModal1(pedido)} />
+                          );
+                        } else {
+                          return ('');
+                        }
+                      })}
                     </div>
                   </div>
                 </section>
@@ -377,7 +486,15 @@ export function Pedidos() {
                 <section aria-labelledby="section-1-title">
                   <div className="overflow-hidden sm:h-[600px] rounded-lg bg-white shadow">
                     <div className="p-6">
-                      <CardPedidos onClick={() => setOpenM2(true)} />
+                      {listaPedidos.map((pedido, index) => {
+                        if (pedido.status === 5) {
+                          return (
+                            <CardPedidos dadosModal={pedido} key={index} onClick={() => setOpenM2(true)} />
+                          );
+                        } else {
+                          return ('');
+                        }
+                      })}
                     </div>
                   </div>
                 </section>
