@@ -4,10 +4,35 @@ import { CheckIcon } from "@heroicons/react/20/solid";
 import { Fragment, useEffect, useState } from "react";
 import { CardPedidos } from "../components/CardPedido";
 import { Header } from "../components/Header";
-import { useAuth } from "../hook/auth";
 import api from "../services/api";
 
-
+interface IPedido {
+  id: number
+  cliente: {
+    nome: string
+    telefone: string
+    logradouro: string
+    numero: string
+    bairro: string
+  }
+  forma_pagamento: {
+    descricao: string
+  }
+  itens: [
+    {
+      id: number
+      quantidade: number
+      cardapio: {
+        id: number
+        nome: string
+        descricao: string
+        valor: number
+      }
+    }
+  ]
+  total: number
+  valor_entraga: number
+}
 
 
 
@@ -20,9 +45,9 @@ export function Pedidos() {
   const [openM2, setOpenM2] = useState(false);
   const [openM3, setOpenM3] = useState(false);
   const [listaPedidos, setListaPedidos] = useState([]);
-  const [dataM1, setDataM1] = useState({});
-  const [dataM2, setDataM2] = useState({});
-  const [dataM3, setDataM3] = useState({});
+  const [dataM1, setDataM1] = useState<IPedido>({} as IPedido);
+  const [dataM2, setDataM2] = useState<IPedido>({} as IPedido);
+  const [dataM3, setDataM3] = useState<IPedido>({} as IPedido);
 
 
   useEffect(() => {
@@ -48,28 +73,28 @@ export function Pedidos() {
   }
 
   function aprovarPedido(id: number) {
-    api.post('/pedidos/status/'+id, {"status": 2}).then((resp) => {
+    api.post('/pedidos/status/' + id, { "status": 2 }).then((resp) => {
       // setListaPedidos(resp.data);
     }).catch((err) => {
     })
   }
 
   function entregarPedido(id: number) {
-    api.post('/pedidos/status/'+id, {"status": 3}).then((resp) => {
+    api.post('/pedidos/status/' + id, { "status": 3 }).then((resp) => {
       // setListaPedidos(resp.data);
     }).catch((err) => {
     })
   }
 
   function finalizarPedido(id: number) {
-    api.post('/pedidos/status/'+id, {"status": 4}).then((resp) => {
+    api.post('/pedidos/status/' + id, { "status": 4 }).then((resp) => {
       // setListaPedidos(resp.data);
     }).catch((err) => {
     })
   }
 
   function cancelarPedido(id: number) {
-    api.post('/pedidos/status/'+id, {"status": 5}).then((resp) => {
+    api.post('/pedidos/status/' + id, { "status": 5 }).then((resp) => {
       // setListaPedidos(resp.data);
     }).catch((err) => {
     })
@@ -348,7 +373,7 @@ export function Pedidos() {
                           </div>
                           <div className="w-1/2">
                             <span>Forma de pagamento: </span>
-                            <span>{dataM3.forma_pagamento != undefined &&  dataM3.forma_pagamento.descricao}</span>
+                            <span>{dataM3.forma_pagamento != undefined && dataM3.forma_pagamento.descricao}</span>
                           </div>
                         </div>
                       </div>
@@ -422,7 +447,7 @@ export function Pedidos() {
                 <section aria-labelledby="section-1-title">
                   <div className="overflow-hidden sm:h-[600px] rounded-lg bg-white shadow">
                     <div className="p-6">
-                      {listaPedidos.map((pedido, index) => {
+                      {listaPedidos.map((pedido: { status: number }, index) => {
                         if (pedido.status === 2) {
                           return (
                             <CardPedidos dadosModal={pedido} key={index} onClick={() => abrirModal2(pedido)} />
@@ -440,7 +465,7 @@ export function Pedidos() {
                 <section aria-labelledby="section-1-title">
                   <div className="overflow-hidden sm:h-[600px] rounded-lg bg-white shadow">
                     <div className="p-6">
-                      {listaPedidos.map((pedido, index) => {
+                      {listaPedidos.map((pedido: { status: number }, index) => {
                         if (pedido.status === 3) {
                           return (
                             <CardPedidos dadosModal={pedido} key={index} onClick={() => abrirModal3(pedido)} />
@@ -468,7 +493,7 @@ export function Pedidos() {
                 <section aria-labelledby="section-1-title">
                   <div className="overflow-hidden sm:h-[600px] rounded-lg bg-white shadow">
                     <div className="p-6">
-                      {listaPedidos.map((pedido, index) => {
+                      {listaPedidos.map((pedido: { status: number }, index) => {
                         if (pedido.status === 4) {
                           return (
                             <CardPedidos dadosModal={pedido} key={index} onClick={() => abrirModal1(pedido)} />
@@ -486,10 +511,10 @@ export function Pedidos() {
                 <section aria-labelledby="section-1-title">
                   <div className="overflow-hidden sm:h-[600px] rounded-lg bg-white shadow">
                     <div className="p-6">
-                      {listaPedidos.map((pedido, index) => {
+                      {listaPedidos.map((pedido: { status: number }, index) => {
                         if (pedido.status === 5) {
                           return (
-                            <CardPedidos dadosModal={pedido} key={index} onClick={() => setOpenM2(true)} />
+                            <CardPedidos dadosModal={pedido} key={index} onClick={() => abrirModal3(pedido)} />
                           );
                         } else {
                           return ('');
