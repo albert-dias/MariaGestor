@@ -207,7 +207,7 @@ export function Pedidos() {
                           </div>
                           <div className="flex justify-between border-y">
                             <span>Taxa de entrega: </span>
-                            <span>{`R$ ${dataM1.total != undefined && dataM1.valor_entraga.toLocaleString('pt-br', { minimumFractionDigits: 2 })}`}</span>
+                            <span>{`R$ ${dataM1.valor_entraga != undefined && dataM1.valor_entraga.toLocaleString('pt-br', { minimumFractionDigits: 2 })}`}</span>
                           </div>
                           <div className="flex justify-between">
                             <span>Total a pagar: </span>
