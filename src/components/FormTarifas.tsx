@@ -1,6 +1,7 @@
 import { Switch } from '@headlessui/react'
 import { PlusIcon } from '@heroicons/react/20/solid';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { toast } from 'react-toastify'
 import api from "../services/api";
 
 
@@ -12,45 +13,55 @@ interface ITarifa {
 }
 
 
+
 export default function FormTarifas() {
 
     const [listaTarifas, setListaTarifas] = useState<ITarifa[]>([]);
     const [novaTarifa, setNovaTarifa] = useState(false);
+    const [state_inputDistacia, setState_inputDistacia] = useState('');
+    const [state_inputValor, setState_inputValor] = useState('');
+
+    let input_novaDistancia = useRef(null);
+    let input_novoValor = useRef(null);
 
 
-    useEffect(() => {
+
+    const AtualizarLista = () => {
         api.get('/tarifafrete').then((resp) => {
             setListaTarifas(resp.data);
-        }).catch((err) => {
-        })
-    }, []);
-
-    const teste = useMemo(() => {
-        api.get('/tarifafrete').then((resp) => {
-            setListaTarifas(resp.data);
-        }).catch((err) => {
-        })
-    }, [])
-
-    
-    function removerTarifa(id:number) {
-        api.delete('/tarifafrete'+id).then((resp) => {
-            console.log(resp)
         }).catch((err) => {
         })
     }
 
 
-    function salvarNovaTarifa() {
-        let nova = {
-            "distancia": document.querySelector('input#nt_distancia')?.value,
-            "id_empresa": 1,
-            "preco": document.querySelector('input#nt_valor')?.value
-        }
-        console.log(nova);
+    useEffect(() => {
+        AtualizarLista()
+    }, []);
 
-        api.post('/tarifafrete', {nova}).then((resp) => {
-            console.log(resp)
+
+    function removerTarifa(id: number) {
+        api.delete('/tarifafrete/' + id).then((resp) => {
+            AtualizarLista()
+        }).catch((err) => {
+        })
+    }
+
+
+    const salvarNovaTarifa = (event: any) => {
+
+        if (!state_inputValor || !state_inputDistacia) {
+            toast.error('Os campos devem estar preenchidos')
+            return
+        }
+
+        let nova = {
+            "distancia": Number(state_inputDistacia),
+            "id_empresa": 1,
+            "preco": Number(state_inputValor)
+        }
+
+        api.post('/tarifafrete', nova).then((resp) => {
+            AtualizarLista()
         }).catch((err) => {
         })
     }
@@ -73,11 +84,12 @@ export default function FormTarifas() {
                 <div>
                     {listaTarifas != undefined &&
                         listaTarifas.map((tarifa: ITarifa, index) => {
-                            if(tarifa.is_active) {
+                            if (tarifa.is_active) {
                                 return (
-                                    <div className='flex mb-6' key={index}>
-                                        <div className="mt-1 flex rounded-md shadow-sm col-span-3">
-                                            <span className="w-24 text-center whitespace-nowrap h-10 mt-1 inline-flex items-center rounded-l-md border border-r-0 border-gray-300 bg-gray-50 px-3 text-gray-500 sm:text-sm">
+                                    <div className='grid grid-cols-3 sm:grid-cols-1' key={index}>
+                                        
+                                        <div className="mt-1 flex rounded-md shadow-sm">
+                                            <span className="text-center whitespace-nowrap h-10 mt-1 inline-flex items-center rounded-l-md border border-r-0 border-gray-300 bg-gray-50 px-3 text-gray-500 sm:text-sm">
                                                 {index == 0 ? 0 : listaTarifas[index - 1].distancia} km até
                                             </span>
                                             <input
@@ -89,33 +101,33 @@ export default function FormTarifas() {
                                                 value={tarifa.distancia + ' km'}
                                             />
                                         </div>
-                                        <div className='pt-7 pl-4 pr-4 col-span-3'>
-                                            <hr className='w-6' />
+
+                                        <div className=''>
+                                            <input
+                                                type="text"
+                                                name="first-name"
+                                                id="first-name"
+                                                placeholder='valor R$'
+                                                autoComplete="given-name"
+                                                className="mt-1 block text-gray-600 text-center rounded-md border border-gray-300 py-2 px-3 border-le shadow-sm focus:border-sky-500 focus:outline-none focus:ring-sky-500 sm:text-sm"
+                                                value={tarifa.preco != undefined ? 'R$ ' + tarifa.preco.toLocaleString('pt-br', { minimumFractionDigits: 2 }) : 0}
+                                            />
                                         </div>
-                                        <input
-                                            type="text"
-                                            name="first-name"
-                                            id="first-name"
-                                            placeholder='valor R$'
-                                            autoComplete="given-name"
-                                            className="col-span-3 mt-1 block text-gray-600 text-center rounded-md border border-gray-300 py-2 px-3 border-le shadow-sm focus:border-sky-500 focus:outline-none focus:ring-sky-500 sm:text-sm"
-                                            value={tarifa.preco != undefined ? 'R$ ' + tarifa.preco.toLocaleString('pt-br', { minimumFractionDigits: 2 }) : 0}
-                                        />
-                                        <div>
+
+                                        <div className=''>
                                             <button
                                                 className="ml-5 mt-[6px] inline-flex justify-center rounded-md border border-transparent border border-gray-300 bg-white py-2 px-4 text-sm font-medium hover:text-white shadow-sm hover:bg-sky-800 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
                                             >
                                                 Editar
                                             </button>
-                                        </div>
-                                        <div>
                                             <button
-                                            onClick={() => removerTarifa(tarifa.id)}
+                                                onClick={() => removerTarifa(tarifa.id)}
                                                 className="ml-5 mt-[6px] inline-flex justify-center rounded-md border border-transparent border border-gray-300 bg-white py-2 px-4 text-sm font-medium hover:text-white text-red-600 shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
                                             >
                                                 Remover
                                             </button>
                                         </div>
+
                                     </div>
                                 );
                             }
@@ -132,17 +144,21 @@ export default function FormTarifas() {
                                     <input
                                         id="nt_distancia"
                                         type="text"
+                                        onChange={e => setState_inputDistacia(e.target.value)}
+                                        ref={input_novaDistancia}
                                         name="first-name"
                                         autoComplete="given-name"
                                         className="mt-1 text-right block text-gray-600 rounded-md border border-gray-300 py-2 px-3 border-le shadow-sm focus:border-sky-500 focus:outline-none focus:ring-sky-500 sm:text-sm"
                                     />
                                 </div>
-                                <div className='pt-7 pl-4 pr-4 col-span-3'>
+                                <div className='pt-7 pl-2 pr-2 col-span-3'>
                                     <hr className='w-6' />
                                 </div>
                                 <input
                                     type="text"
                                     name="first-name"
+                                    onChange={e => setState_inputValor(e.target.value)}
+                                    ref={input_novoValor}
                                     id="nt_valor"
                                     placeholder='valor R$'
                                     autoComplete="given-name"
@@ -150,7 +166,8 @@ export default function FormTarifas() {
                                 />
                                 <div>
                                     <button
-                                        onClick={() => salvarNovaTarifa()}
+
+                                        onClick={salvarNovaTarifa}
                                         className="ml-5 mt-[6px] inline-flex justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-green-600 shadow-sm hover:bg-green-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
                                     >
                                         salvar
