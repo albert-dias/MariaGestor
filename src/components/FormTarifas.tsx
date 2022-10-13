@@ -86,9 +86,9 @@ export default function FormTarifas() {
                         listaTarifas.map((tarifa: ITarifa, index) => {
                             if (tarifa.is_active) {
                                 return (
-                                    <div className='grid grid-cols-3 sm:grid-cols-1' key={index}>
+                                    <div className='grid gap-1 items-center grid-cols-1 sm:grid-cols-1 md:grid-cols-2 mb-8' key={index}>
                                         
-                                        <div className="mt-1 flex rounded-md shadow-sm">
+                                        <div className="rounded-md grid grid-cols-2 shadow-sm">
                                             <span className="text-center whitespace-nowrap h-10 mt-1 inline-flex items-center rounded-l-md border border-r-0 border-gray-300 bg-gray-50 px-3 text-gray-500 sm:text-sm">
                                                 {index == 0 ? 0 : listaTarifas[index - 1].distancia} km até
                                             </span>
@@ -102,30 +102,32 @@ export default function FormTarifas() {
                                             />
                                         </div>
 
-                                        <div className=''>
-                                            <input
-                                                type="text"
-                                                name="first-name"
-                                                id="first-name"
-                                                placeholder='valor R$'
-                                                autoComplete="given-name"
-                                                className="mt-1 block text-gray-600 text-center rounded-md border border-gray-300 py-2 px-3 border-le shadow-sm focus:border-sky-500 focus:outline-none focus:ring-sky-500 sm:text-sm"
-                                                value={tarifa.preco != undefined ? 'R$ ' + tarifa.preco.toLocaleString('pt-br', { minimumFractionDigits: 2 }) : 0}
-                                            />
-                                        </div>
+                                        <div className='grid grid-cols-2'>                                        
+                                            <div className='justify-center items-center h-8'>
+                                                <input
+                                                    type="text"
+                                                    name="first-name"
+                                                    id="first-name"
+                                                    placeholder='valor R$'
+                                                    autoComplete="given-name"
+                                                    className="mt-1 block text-gray-600 text-center rounded-md border border-gray-300 py-2 px-3 border-le shadow-sm focus:border-sky-500 focus:outline-none focus:ring-sky-500 sm:text-sm"
+                                                    value={tarifa.preco != undefined ? 'R$ ' + tarifa.preco.toLocaleString('pt-br', { minimumFractionDigits: 2 }) : 0}
+                                                />
+                                            </div>
 
-                                        <div className=''>
-                                            <button
-                                                className="ml-5 mt-[6px] inline-flex justify-center rounded-md border border-transparent border border-gray-300 bg-white py-2 px-4 text-sm font-medium hover:text-white shadow-sm hover:bg-sky-800 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
-                                            >
-                                                Editar
-                                            </button>
-                                            <button
-                                                onClick={() => removerTarifa(tarifa.id)}
-                                                className="ml-5 mt-[6px] inline-flex justify-center rounded-md border border-transparent border border-gray-300 bg-white py-2 px-4 text-sm font-medium hover:text-white text-red-600 shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
-                                            >
-                                                Remover
-                                            </button>
+                                            <div className='grid grid-cols-2'>
+                                                <button
+                                                    className="ml-5 mt-[6px] inline-flex justify-center rounded-md border border-transparent border border-gray-300 bg-white py-2 px-4 text-sm font-medium hover:text-white shadow-sm hover:bg-sky-800 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
+                                                >
+                                                    Editar
+                                                </button>
+                                                <button
+                                                    onClick={() => removerTarifa(tarifa.id)}
+                                                    className="ml-5 mt-[6px] inline-flex justify-center rounded-md border border-transparent border border-gray-300 bg-white py-2 px-4 text-sm font-medium hover:text-white text-red-600 shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
+                                                >
+                                                    Remover
+                                                </button>
+                                            </div>
                                         </div>
 
                                     </div>
