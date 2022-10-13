@@ -258,22 +258,33 @@ export function Cardapio() {
                     setOpen(true);
                   }}
                   type="button"
-                  className="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-full shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mr-6"
+                  className="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mr-6"
                 >
                   Adicionar novo item
                   <PlusIcon className="h-5 w-5 ml-1" aria-hidden="true" />
                 </button>
+
+                <button
+                  onClick={() => {
+                    setOpen(true);
+                  }}
+                  type="button"
+                  className="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mr-6"
+                >
+                  Adicionar nova categoria
+                  <PlusIcon className="h-5 w-5 ml-1" aria-hidden="true" />
+                </button>
+
                 <span className="isolate inline-flex rounded-md shadow-sm">
                   <button
                     onClick={() => {
                       handleFilter("all");
                     }}
                     type="button"
-                    className={`relative inline-flex items-center rounded-l-md border border-gray-300 ${
-                      active === "all"
+                    className={`relative inline-flex items-center rounded-l-md border border-gray-300 ${active === "all"
                         ? "bg-indigo-500 text-gray-100"
                         : "bg-white text-gray-700"
-                    } px-4 py-2 text-sm font-medium hover:bg-indigo-500 `}
+                      } px-4 py-2 text-sm font-medium hover:bg-indigo-500 `}
                   >
                     Todos
                   </button>
@@ -282,11 +293,10 @@ export function Cardapio() {
                       handleFilter("a");
                     }}
                     type="button"
-                    className={`relative -ml-px inline-flex items-center border border-gray-300 ${
-                      active === "a"
+                    className={`relative -ml-px inline-flex items-center border border-gray-300 ${active === "a"
                         ? "bg-indigo-500 text-gray-100"
                         : "bg-white text-gray-700"
-                    } px-4 py-2 text-sm font-medium hover:bg-indigo-500 `}
+                      } px-4 py-2 text-sm font-medium hover:bg-indigo-500 `}
                   >
                     Ativos
                   </button>
@@ -295,11 +305,10 @@ export function Cardapio() {
                       handleFilter("i");
                     }}
                     type="button"
-                    className={`relative -ml-px inline-flex items-center rounded-r-md border border-gray-300 ${
-                      active === "i"
+                    className={`relative -ml-px inline-flex items-center rounded-r-md border border-gray-300 ${active === "i"
                         ? "bg-indigo-500 text-gray-100"
                         : "bg-white text-gray-700"
-                    } px-4 py-2 text-sm font-medium  hover:bg-indigo-500 `}
+                      } px-4 py-2 text-sm font-medium  hover:bg-indigo-500 `}
                   >
                     Inativos
                   </button>
