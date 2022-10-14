@@ -258,7 +258,7 @@ export function Cardapio() {
                     setOpen(true);
                   }}
                   type="button"
-                  className="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mr-6"
+                  className="inline-flex items-center h-10 px-3 py-1.5 border border-transparent text-sm font-medium rounded shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mr-6"
                 >
                   Adicionar novo item
                   <PlusIcon className="h-5 w-5 ml-1" aria-hidden="true" />
@@ -269,7 +269,7 @@ export function Cardapio() {
                     setOpen(true);
                   }}
                   type="button"
-                  className="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mr-6"
+                  className="inline-flex items-center h-10 px-3 py-1.5 border border-transparent text-sm font-medium rounded shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mr-6"
                 >
                   Adicionar nova categoria
                   <PlusIcon className="h-5 w-5 ml-1" aria-hidden="true" />
@@ -282,8 +282,8 @@ export function Cardapio() {
                     }}
                     type="button"
                     className={`relative inline-flex items-center rounded-l-md border border-gray-300 ${active === "all"
-                        ? "bg-indigo-500 text-gray-100"
-                        : "bg-white text-gray-700"
+                      ? "bg-indigo-500 text-gray-100"
+                      : "bg-white text-gray-700"
                       } px-4 py-2 text-sm font-medium hover:bg-indigo-500 `}
                   >
                     Todos
@@ -294,8 +294,8 @@ export function Cardapio() {
                     }}
                     type="button"
                     className={`relative -ml-px inline-flex items-center border border-gray-300 ${active === "a"
-                        ? "bg-indigo-500 text-gray-100"
-                        : "bg-white text-gray-700"
+                      ? "bg-indigo-500 text-gray-100"
+                      : "bg-white text-gray-700"
                       } px-4 py-2 text-sm font-medium hover:bg-indigo-500 `}
                   >
                     Ativos
@@ -306,8 +306,8 @@ export function Cardapio() {
                     }}
                     type="button"
                     className={`relative -ml-px inline-flex items-center rounded-r-md border border-gray-300 ${active === "i"
-                        ? "bg-indigo-500 text-gray-100"
-                        : "bg-white text-gray-700"
+                      ? "bg-indigo-500 text-gray-100"
+                      : "bg-white text-gray-700"
                       } px-4 py-2 text-sm font-medium  hover:bg-indigo-500 `}
                   >
                     Inativos
@@ -325,6 +325,9 @@ export function Cardapio() {
               {/* Left column */}
               <div className="grid grid-cols-1 col-span-3 gap-4">
                 <section aria-labelledby="section-1-title">
+                  <h2 className="text-lg mb-4 font-medium leading-6 text-white">
+                    Itens Cadastrados
+                  </h2>
                   <div className="rounded-lg  bg-white shadow">
                     <div className="p-6">
                       <ul

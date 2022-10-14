@@ -30,7 +30,7 @@ export default function FormTarifas() {
         let tempLista = [];
         api.get('/tarifafrete').then((resp) => {
             tempLista = resp.data;
-            tempLista = tempLista.filter((t:ITarifa) => {
+            tempLista = tempLista.filter((t: ITarifa) => {
                 return t.is_active;
             })
             setListaTarifas(tempLista);
@@ -96,7 +96,7 @@ export default function FormTarifas() {
                             if (tarifa.is_active) {
                                 return (
                                     <div className='grid gap-4 items-center grid-cols-1 sm:grid-cols-1 md:grid-cols-2 mb-6' key={index}>
-                                        
+
                                         <div className="rounded-md grid grid-cols-2 shadow-sm">
                                             <span className="text-center whitespace-nowrap h-10 mt-1 inline-flex items-center rounded-l-md border border-r-0 border-gray-300 bg-gray-50 px-3 text-gray-500 sm:text-sm">
                                                 {index == 0 ? 0 : listaTarifas[index - 1].distancia} km até
@@ -111,7 +111,7 @@ export default function FormTarifas() {
                                             />
                                         </div>
 
-                                        <div className='grid grid-cols-2'>                                       
+                                        <div className='grid grid-cols-2'>
                                             <div className='justify-center items-center h-8'>
                                                 <input
                                                     type="text"
@@ -125,18 +125,18 @@ export default function FormTarifas() {
                                             </div>
 
                                             <div className='grid grid-cols-2'>
-                                            <span className="isolate inline-flex rounded-md shadow-sm">
-                                                <button
-                                                    className="mt-[6px] inline-flex border-r-0 justify-center border rounded-l-md border-transparent border-gray-300 bg-white py-2 px-4 text-sm font-medium hover:text-white shadow-sm hover:bg-sky-800 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
-                                                >
-                                                    Editar
-                                                </button>
-                                                <button
-                                                    onClick={() => removerTarifa(tarifa.id)}
-                                                    className="mt-[6px] inline-flex justify-center rounded-r-md border-transparent border border-gray-300 bg-white py-2 px-4 text-sm font-medium hover:text-white text-red-600 shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
-                                                >
-                                                    Remover
-                                                </button>
+                                                <span className="isolate inline-flex rounded-md shadow-sm">
+                                                    <button
+                                                        className="mt-[6px] inline-flex border-r-0 justify-center border rounded-l-md border-transparent border-gray-300 bg-white py-2 px-4 text-sm font-medium hover:text-white shadow-sm hover:bg-sky-800 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
+                                                    >
+                                                        Editar
+                                                    </button>
+                                                    <button
+                                                        onClick={() => removerTarifa(tarifa.id)}
+                                                        className="mt-[6px] inline-flex justify-center rounded-r-md border-transparent border border-gray-300 bg-white py-2 px-4 text-sm font-medium hover:text-white text-red-600 shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
+                                                    >
+                                                        Remover
+                                                    </button>
                                                 </span>
                                             </div>
                                         </div>

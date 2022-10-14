@@ -6,10 +6,15 @@ module.exports = {
   ],
   theme: {
     extend: {
-      fontFamily:{
+      fontFamily: {
         sans: 'Roboto, sans-serif',
       },
     },
   },
-  plugins: [],
+  plugins: [
+    require('tailwind-scrollbar'),
+  ],
+  variants: {
+    scrollbar: ['rounded']
+  }
 }
