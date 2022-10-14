@@ -27,8 +27,13 @@ export default function FormTarifas() {
 
 
     const AtualizarLista = () => {
+        let tempLista = [];
         api.get('/tarifafrete').then((resp) => {
-            setListaTarifas(resp.data);
+            tempLista = resp.data;
+            tempLista = tempLista.filter((t:ITarifa) => {
+                return t.is_active;
+            })
+            setListaTarifas(tempLista);
         }).catch((err) => {
         })
     }
@@ -42,6 +47,8 @@ export default function FormTarifas() {
     function removerTarifa(id: number) {
         api.delete('/tarifafrete/' + id).then((resp) => {
             AtualizarLista()
+            toast.info('Tarifa removida com sucesso');
+            setNovaTarifa(false);
         }).catch((err) => {
         })
     }
@@ -62,6 +69,8 @@ export default function FormTarifas() {
 
         api.post('/tarifafrete', nova).then((resp) => {
             AtualizarLista()
+            toast.info('Nota tarifa adicionada com sucesso')
+            setNovaTarifa(false);
         }).catch((err) => {
         })
     }
@@ -70,7 +79,7 @@ export default function FormTarifas() {
 
         <div className="aba-config divide-y divide-gray-200 lg:col-span-9">
             {/* Profile section */}
-            <div className="py-6 px-4 mb-10 sm:p-6 lg:pb-8">
+            <div className="py-6 px-4 mb-10 sm:p-8 lg:pb-8">
 
 
                 <div className='mb-12 mt-6'>
@@ -86,7 +95,7 @@ export default function FormTarifas() {
                         listaTarifas.map((tarifa: ITarifa, index) => {
                             if (tarifa.is_active) {
                                 return (
-                                    <div className='grid gap-1 items-center grid-cols-1 sm:grid-cols-1 md:grid-cols-2 mb-8' key={index}>
+                                    <div className='grid gap-4 items-center grid-cols-1 sm:grid-cols-1 md:grid-cols-2 mb-6' key={index}>
                                         
                                         <div className="rounded-md grid grid-cols-2 shadow-sm">
                                             <span className="text-center whitespace-nowrap h-10 mt-1 inline-flex items-center rounded-l-md border border-r-0 border-gray-300 bg-gray-50 px-3 text-gray-500 sm:text-sm">
@@ -97,12 +106,12 @@ export default function FormTarifas() {
                                                 name="first-name"
                                                 id="first-name"
                                                 autoComplete="given-name"
-                                                className="mt-1 text-right block text-gray-600 rounded-md border border-gray-300 py-2 px-3 border-le shadow-sm focus:border-sky-500 focus:outline-none focus:ring-sky-500 sm:text-sm"
+                                                className="mt-1 text-right block text-gray-600 rounded-r-md border border-gray-300 py-2 px-3 border-le shadow-sm focus:border-sky-500 focus:outline-none focus:ring-sky-500 sm:text-sm"
                                                 value={tarifa.distancia + ' km'}
                                             />
                                         </div>
 
-                                        <div className='grid grid-cols-2'>                                        
+                                        <div className='grid grid-cols-2'>                                       
                                             <div className='justify-center items-center h-8'>
                                                 <input
                                                     type="text"
@@ -116,17 +125,19 @@ export default function FormTarifas() {
                                             </div>
 
                                             <div className='grid grid-cols-2'>
+                                            <span className="isolate inline-flex rounded-md shadow-sm">
                                                 <button
-                                                    className="ml-5 mt-[6px] inline-flex justify-center rounded-md border border-transparent border border-gray-300 bg-white py-2 px-4 text-sm font-medium hover:text-white shadow-sm hover:bg-sky-800 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
+                                                    className="mt-[6px] inline-flex border-r-0 justify-center border rounded-l-md border-transparent border-gray-300 bg-white py-2 px-4 text-sm font-medium hover:text-white shadow-sm hover:bg-sky-800 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
                                                 >
                                                     Editar
                                                 </button>
                                                 <button
                                                     onClick={() => removerTarifa(tarifa.id)}
-                                                    className="ml-5 mt-[6px] inline-flex justify-center rounded-md border border-transparent border border-gray-300 bg-white py-2 px-4 text-sm font-medium hover:text-white text-red-600 shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
+                                                    className="mt-[6px] inline-flex justify-center rounded-r-md border-transparent border border-gray-300 bg-white py-2 px-4 text-sm font-medium hover:text-white text-red-600 shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
                                                 >
                                                     Remover
                                                 </button>
+                                                </span>
                                             </div>
                                         </div>
 
