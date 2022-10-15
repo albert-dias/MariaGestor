@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import { CardCardapioPromocao } from "../components/CardCardapioPromocao";
 import { Header } from "../components/Header";
+import { useAuth } from "../hook/auth";
 import api from "../services/api";
 
 interface ITarifa {
@@ -26,6 +27,7 @@ interface ItemProps {
 
 export function Home() {
 
+  const {user} = useAuth();
   const [listaTarifas, setListaTarifas] = useState<ITarifa[]>([]);
   const [items, setItems] = useState<ItemProps[]>([]);
   const [horaAbertura, setHoraAbertura] = useState();
@@ -39,12 +41,12 @@ export function Home() {
       setHoraAbertura(resp.data.hora_inicio);
       setHoraFechamento(resp.data.hora_fim);
       let horaAtual = new Date();
-      let expediente = new Date(`2021-01-01T${horaFechamento}:00-03:00`) - new Date(`2021-01-01T${horaAbertura}:00-03:00`);
+      let expediente = Number(new Date(`2021-01-01T${horaFechamento}:00-03:00`)) - Number(new Date(`2021-01-01T${horaAbertura}:00-03:00`));
       let H = horaAtual.getHours() < 10 ? `0${horaAtual.getHours()}` : horaAtual.getHours();
       let M = horaAtual.getMinutes() < 10 ? `0${horaAtual.getMinutes()}` : horaAtual.getMinutes();
       let S = horaAtual.getSeconds() < 10 ? `0${horaAtual.getSeconds()}` : horaAtual.getSeconds();
-      let tempoAberto = new Date(`2021-01-01T${H}:${M}:${S}-03:00`) - new Date(`2021-01-01T${horaAbertura}:00-03:00`);
-      let percent = parseInt((tempoAberto / expediente) * 100);
+      let tempoAberto = Number(new Date(`2021-01-01T${H}:${M}:${S}-03:00`)) - Number(new Date(`2021-01-01T${horaAbertura}:00-03:00`));
+      let percent = (tempoAberto / expediente) * 100;
       percent = percent > 0 ? percent : 0;
       // console.log(percent);
       setWidthProgressBar(percent);
