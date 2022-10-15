@@ -17,6 +17,27 @@ interface User {
   document: string;
   email: string;
   id_empresa: number;
+  empresa: {
+    id: number;
+    cnpj: string;
+    razao_social: string;
+    nome_fantasia: string;
+    contato_wpp: string;
+    contato_email: string;
+    rua: string;
+    numero: string;
+    complemento: string;
+    bairro: string;
+    cidade: string;
+    estado: string;
+    lat: string;
+    lon: string;
+    aberta: number
+    hora_inicio: string;
+    hora_fim: string;
+    dia_vencimento: number;
+    is_active: number;
+  }
 }
 
 interface AuthState {

@@ -1,13 +1,16 @@
 /* This example requires Tailwind CSS v2.0+ */
 import { Dialog, Transition } from "@headlessui/react";
 import { CheckIcon } from "@heroicons/react/20/solid";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useCallback, useEffect, useState } from "react";
+import { io } from "socket.io-client";
 import { CardPedidos } from "../components/CardPedido";
 import { Header } from "../components/Header";
+import { useAuth } from "../hook/auth";
 import api from "../services/api";
 
-interface IPedido {
-  id: number
+export interface IPedido {
+  id: number;
+  id_empresa: number;
   cliente: {
     nome: string
     telefone: string
@@ -31,30 +34,46 @@ interface IPedido {
     }
   ]
   total: number
-  valor_entraga: number
+  valor_entraga: number;
+  status: number;
+  created_at: string;
 }
-
-
 
 
 export function Pedidos() {
 
-  // const { user } = useAuth();
-
+  const { user } = useAuth();
   const [open, setOpen] = useState(false);
   const [openM2, setOpenM2] = useState(false);
   const [openM3, setOpenM3] = useState(false);
-  const [listaPedidos, setListaPedidos] = useState([]);
+  const [listaPedidos, setListaPedidos] = useState<IPedido[]>([]);
   const [dataM1, setDataM1] = useState<IPedido>({} as IPedido);
   const [dataM2, setDataM2] = useState<IPedido>({} as IPedido);
   const [dataM3, setDataM3] = useState<IPedido>({} as IPedido);
 
-
-  useEffect(() => {
+  const loadPedidos = useCallback(async() => {
     api.get('/pedidos').then((resp) => {
       setListaPedidos(resp.data);
     }).catch((err) => {
     })
+  },[])
+
+  const socket = io("https://api.mgmenu.com.br");
+
+  socket.on("pedidoSolicitado", (data: IPedido) => {
+    if(data.id_empresa === user.id_empresa){
+      loadPedidos()
+    }
+  })
+
+  socket.on("statusPedido", (data: IPedido) => {
+    if(data.id_empresa === user.id_empresa){
+      loadPedidos()
+    }
+  })
+
+  useEffect(() => {
+    loadPedidos();
   }, []);
 
   function abrirModal1(pedido: any) {
@@ -73,31 +92,35 @@ export function Pedidos() {
   }
 
   function aprovarPedido(id: number) {
-    api.post('/pedidos/status/' + id, { "status": 2 }).then((resp) => {
-      // setListaPedidos(resp.data);
-    }).catch((err) => {
-    })
+    socket.emit("estabelecimentoMudouStatus", {id_pedido: id, status: 2, id_empresa:user.id_empresa})
+    // api.post('/pedidos/status/' + id, { "status": 2 }).then((resp) => {
+    //   // setListaPedidos(resp.data);
+    // }).catch((err) => {
+    // })
   }
 
   function entregarPedido(id: number) {
-    api.post('/pedidos/status/' + id, { "status": 3 }).then((resp) => {
-      // setListaPedidos(resp.data);
-    }).catch((err) => {
-    })
+    socket.emit("estabelecimentoMudouStatus", {id_pedido: id, status: 3, id_empresa:user.id_empresa})
+    // api.post('/pedidos/status/' + id, { "status": 3 }).then((resp) => {
+    //   // setListaPedidos(resp.data);
+    // }).catch((err) => {
+    // })
   }
 
   function finalizarPedido(id: number) {
-    api.post('/pedidos/status/' + id, { "status": 4 }).then((resp) => {
-      // setListaPedidos(resp.data);
-    }).catch((err) => {
-    })
+    socket.emit("estabelecimentoMudouStatus", {id_pedido: id, status: 4, id_empresa:user.id_empresa})
+    // api.post('/pedidos/status/' + id, { "status": 4 }).then((resp) => {
+    //   // setListaPedidos(resp.data);
+    // }).catch((err) => {
+    // })
   }
 
   function cancelarPedido(id: number) {
-    api.post('/pedidos/status/' + id, { "status": 5 }).then((resp) => {
-      // setListaPedidos(resp.data);
-    }).catch((err) => {
-    })
+    socket.emit("estabelecimentoMudouStatus", {id_pedido: id, status: 5, id_empresa:user.id_empresa})
+    // api.post('/pedidos/status/' + id, { "status": 5 }).then((resp) => {
+    //   // setListaPedidos(resp.data);
+    // }).catch((err) => {
+    // })
   }
 
   return (
@@ -447,7 +470,7 @@ export function Pedidos() {
                 <section aria-labelledby="section-1-title">
                   <div className="overflow-hidden sm:h-[600px] rounded-lg bg-white shadow">
                     <div className="p-6">
-                      {listaPedidos.map((pedido: { status: number }, index) => {
+                      {listaPedidos.map((pedido, index) => {
                         if (pedido.status === 2) {
                           return (
                             <CardPedidos dadosModal={pedido} key={index} onClick={() => abrirModal2(pedido)} />
@@ -465,7 +488,7 @@ export function Pedidos() {
                 <section aria-labelledby="section-1-title">
                   <div className="overflow-hidden sm:h-[600px] rounded-lg bg-white shadow">
                     <div className="p-6">
-                      {listaPedidos.map((pedido: { status: number }, index) => {
+                      {listaPedidos.map((pedido, index) => {
                         if (pedido.status === 3) {
                           return (
                             <CardPedidos dadosModal={pedido} key={index} onClick={() => abrirModal3(pedido)} />
@@ -493,7 +516,7 @@ export function Pedidos() {
                 <section aria-labelledby="section-1-title">
                   <div className="overflow-hidden sm:h-[600px] rounded-lg bg-white shadow">
                     <div className="p-6">
-                      {listaPedidos.map((pedido: { status: number }, index) => {
+                      {listaPedidos.map((pedido, index) => {
                         if (pedido.status === 4) {
                           return (
                             <CardPedidos dadosModal={pedido} key={index} onClick={() => abrirModal1(pedido)} />
@@ -511,7 +534,7 @@ export function Pedidos() {
                 <section aria-labelledby="section-1-title">
                   <div className="overflow-hidden sm:h-[600px] rounded-lg bg-white shadow">
                     <div className="p-6">
-                      {listaPedidos.map((pedido: { status: number }, index) => {
+                      {listaPedidos.map((pedido, index) => {
                         if (pedido.status === 5) {
                           return (
                             <CardPedidos dadosModal={pedido} key={index} onClick={() => abrirModal3(pedido)} />
