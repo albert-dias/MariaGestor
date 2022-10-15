@@ -42,7 +42,7 @@ export function Settings() {
   const [indexAtual, setIndexAtual] = useState(0);
 
   const mudarAba = useMemo(() => {
-    console.log(indexAtual);
+    // console.log(indexAtual);
     let listaAlterada = sideList;
     listaAlterada.forEach((item, index) => {
       if(indexAtual == index) {

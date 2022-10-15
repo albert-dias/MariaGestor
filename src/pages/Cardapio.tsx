@@ -2,6 +2,7 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { CheckIcon, PlusIcon } from "@heroicons/react/20/solid";
 import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
+import { toast } from "react-toastify";
 import { CardCardapio } from "../components/CardCardapio";
 import { CardPedidos } from "../components/CardPedido";
 import { Header } from "../components/Header";
@@ -22,11 +23,14 @@ interface ItemProps {
 export function Cardapio() {
   const [active, setActive] = useState("all");
   const [open, setOpen] = useState(false);
+  const [openM2, setOpenM2] = useState(false);
   const [nome, setNome] = useState("");
+  const [nomeCategoria, setNomeCategoria] = useState("");
   const [descricao, setDescricao] = useState("");
   const [valor, setValor] = useState("");
   const [tempoPreparo, setTempoPreparo] = useState("");
   const [items, setItems] = useState<ItemProps[]>([]);
+
 
   const loadCardapio = useCallback(async () => {
     api
@@ -39,9 +43,23 @@ export function Cardapio() {
       .catch((e) => console.log(e));
   }, []);
 
+
+  const handleRegisterCategory = () => {
+    api.post("/categorias", {nome: nomeCategoria})
+    .then((resp) => {
+      setOpenM2(false);
+      toast.success('Nova Categoria Criada com Sucesso');
+    })
+    .catch((e) => {
+        console.log(e);
+      })
+  }
+
+
   useEffect(() => {
     loadCardapio();
   }, []);
+
 
   const handleRegisterProduct = useCallback(async () => {
     api
@@ -61,9 +79,11 @@ export function Cardapio() {
       });
   }, [nome, descricao, valor, tempoPreparo]);
 
+
   const handleFilter = useCallback((set: string) => {
     setActive(set);
   }, []);
+
 
   const filter = useMemo(() => {
     if (active === "all") {
@@ -76,6 +96,7 @@ export function Cardapio() {
       return items.filter((p) => p.is_active === 0);
     }
   }, [items, active]);
+
 
   return (
     <>
@@ -244,6 +265,82 @@ export function Cardapio() {
           </div>
         </Dialog>
       </Transition.Root>
+
+
+
+
+
+      <Transition.Root show={openM2} as={Fragment}>
+        <Dialog as="div" className="relative z-10" onClose={setOpenM2}>
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 z-10 overflow-y-auto">
+            <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                enterTo="opacity-100 translate-y-0 sm:scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+                leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+              >
+                <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-slate-50 px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-sm sm:p-6">
+                  <div>
+                    <div className="sm:col-span-6">
+                      <h2 className="text-lg text-center mb-5 font-medium leading-6">
+                        Nova Categoria
+                      </h2>
+                      <div className="mt-4">
+                        <label
+                          htmlFor="first-name"
+                          className="block text-sm font-medium text-gray-700"
+                        >
+                          Nome da Categoria
+                        </label>
+                        <div className="mt-1 border border-gray-300 rounded-md">
+                          <input
+                            onChange={(e) => setNomeCategoria(e.target.value)}
+                            type="text"
+                            name="first-name"
+                            id="first-name"
+                            autoComplete="given-name"
+                            className="block w-full h-10 rounded-md border-gray-300 px-2"
+                          />
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+                  <div className="mt-5 sm:mt-6">
+                    <button
+                      type="button"
+                      className="inline-flex w-full justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:text-sm"
+                      onClick={handleRegisterCategory}
+                    >
+                      Salvar
+                    </button>
+                  </div>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition.Root>
+
+
+
+
       <div className="min-h-full pb-4">
         <div className="bg-gray-800 pb-32">
           <Header name="Cardápio" />
@@ -266,7 +363,7 @@ export function Cardapio() {
 
                 <button
                   onClick={() => {
-                    setOpen(true);
+                    setOpenM2(true);
                   }}
                   type="button"
                   className="inline-flex items-center h-10 px-3 py-1.5 border border-transparent text-sm font-medium rounded shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mr-6"

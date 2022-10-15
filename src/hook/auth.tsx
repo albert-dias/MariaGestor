@@ -59,13 +59,13 @@ const AuthProvider = ({ children }: any) => {
     api
       .get("/users/me")
       .then((res) => {
-        console.log(res.status);
+        // console.log(res.status);
         if (res.status !== 200) {
           signOut();
         }
       })
       .catch((e) => {
-        console.log(e);
+        // console.log(e);
         signOut();
       });
   }, []);

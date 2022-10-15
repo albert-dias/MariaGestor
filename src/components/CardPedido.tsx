@@ -13,7 +13,7 @@ interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 export function CardPedidos({...rest}: Props) {
-  console.log({...rest})
+  // console.log({...rest})
   return (
     <button {...rest} className="cursor-pointer border border-green-300 p-2 mt-4 rounded bg-green-100 hover:bg-green-200 flex-col shadow w-full">
       <div>

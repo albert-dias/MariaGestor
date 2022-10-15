@@ -15,7 +15,7 @@ export default function FormHorarios() {
 
     useEffect(() => {
         api.get('/empresas/1').then((resp) => {
-            console.log(resp.data);
+            // console.log(resp.data);
             setHoraAbertura(resp.data.hora_inicio);
             setHoraFechamento(resp.data.hora_fim);
         }).catch((err) => {
@@ -27,8 +27,6 @@ export default function FormHorarios() {
         <div className="aba-config divide-y divide-gray-200 lg:col-span-9">
             {/* Profile section */}
             <div className="py-6 px-4 sm:p-6 lg:pb-8">
-
-
                 <div className="divide-y divide-gray-200 pt-6">
                     <div className='mb-12'>
                         <h2 className="text-lg font-medium leading-6 text-gray-900">Horários de Funcionamento</h2>
@@ -72,7 +70,6 @@ export default function FormHorarios() {
                                     Editar
                                 </button>
                             </div>
-
                         </div>
                     </div>
                 </div>

@@ -1,6 +1,7 @@
 /* This example requires Tailwind CSS v2.0+ */
 import { PlusIcon } from "@heroicons/react/20/solid";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { toast } from "react-toastify";
 import { CardCardapioPromocao } from "../components/CardCardapioPromocao";
 import { Header } from "../components/Header";
 import api from "../services/api";
@@ -52,14 +53,32 @@ export function Home() {
   }
 
 
+  function verStatusLoja() {
+    api.get(`/empresas/1`).then((res) => {
+      if (res.data.aberta == 1) {
+        setLojaAberta(1);
+      } else {
+        setLojaAberta(0);
+      }
+    }).catch((e) => console.log(e));
+  }
+
+
   function abrirLoja() {
     api.post(`/empresas/abrir/1`).then((res) => {
       setLojaAberta(1);
+      toast.info('Expediente Iniciado');
+
     }).catch((e) => console.log(e));
   }
   function fecharLoja() {
     api.post(`/empresas/fechar/1`).then((res) => {
       setLojaAberta(0);
+      if (widthProgressBar > 0) {
+        toast.warning('Expediente Pausado');
+      } else {
+        toast.info('Expediente Encerrado');
+      }
     }).catch((e) => console.log(e));
   }
 
@@ -86,10 +105,12 @@ export function Home() {
 
 
   useEffect(() => {
+    verStatusLoja();
     AtualizarLista();
     loadCardapio();
     buscarHorarios();
   }, []);
+
 
   return (
     <>
@@ -104,9 +125,9 @@ export function Home() {
               <div>
                 {lojaAberta == 1 ?
                   <button
-                  onClick={fecharLoja}
+                    onClick={fecharLoja}
                     type="button"
-                    className="inline-flex h-10 items-center pr-3 py-1.5 pl-4 border border-transparent text-sm font-medium rounded shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none"
+                    className={`inline-flex h-10 items-center pr-3 py-1.5 pl-4 border border-transparent text-sm font-medium rounded shadow-sm text-white ${widthProgressBar <= 0 ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-red-600 hover:bg-red-700'} focus:outline-none`}
                   >
                     Encerrar Expediente
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-5 ml-2">
@@ -114,9 +135,9 @@ export function Home() {
                     </svg>
                   </button> :
                   <button
-                  onClick={abrirLoja}
+                    onClick={abrirLoja}
                     type="button"
-                    className="inline-flex h-10 items-center pr-3 py-1.5 pl-4 border border-transparent text-sm font-medium rounded shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none"
+                    className={`inline-flex h-10 items-center pr-3 py-1.5 pl-4 border border-transparent text-sm font-medium rounded shadow-sm text-white ${widthProgressBar > 0 ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-red-600 hover:bg-red-700'} focus:outline-none`}
                   >
                     Iniciar Expediente
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-5 ml-2">
@@ -157,7 +178,7 @@ export function Home() {
                                   name="first-name"
                                   id="first-name"
                                   autoComplete="given-name"
-                                  className="text-center block bg-gray-50 text-gray-600 border border-x-0 border-t-0 border-gray-200 py-2 px-3 border-le focus:outline-none sm:text-sm"
+                                  className={`text-center block bg-gray-50 text-gray-600 border border-x-0 border-t-0 ${index + 1 == listaTarifas.length ? 'border-b-0' : ''} border-gray-200 py-2 px-3 border-le focus:outline-none sm:text-sm`}
                                   value={`${index == 0
                                     ? 0
                                     : listaTarifas[index - 1].distancia
@@ -171,7 +192,7 @@ export function Home() {
                                   id="first-name"
                                   placeholder="valor R$"
                                   autoComplete="given-name"
-                                  className="block text-gray-600 text-center border border-gray-200 py-2 px-3 border-r-0 border-t-0 focus:outline-none sm:text-sm"
+                                  className={`block text-gray-600 text-center border border-gray-200 py-2 px-3 border-r-0 border-t-0 ${index + 1 == listaTarifas.length ? 'border-b-0' : ''} focus:outline-none sm:text-sm`}
                                   value={
                                     tarifa.preco != undefined
                                       ? "R$ " +
@@ -196,6 +217,28 @@ export function Home() {
                   <div className="overflow-hidden sm:h-[300px] rounded-lg bg-white shadow">
                     <div className="p-8">
 
+
+
+
+                      {(widthProgressBar > 0 && lojaAberta) == 0 ?
+                        <div className="bg-yellow-100 border mb-[-40px] border-yellow-400 text-yellow-700 px-4 py-3 rounded relative" role="alert">
+                          <strong className="font-bold">Hora de abrir!</strong>
+                          <span className="block sm:inline"> Inicie seu expediente. Seus clientes esperam por você.</span>
+                          <span className="absolute top-0 bottom-0 right-0 px-4 py-3">
+                          </span>
+                        </div> :
+
+                        (widthProgressBar <= 0 && lojaAberta) == 1 ?
+                          <div className="bg-blue-100 border mb-[-40px] border-blue-400 text-blue-700 px-4 py-3 rounded relative" role="alert">
+                            <strong className="font-bold">Missão cumprida!</strong>
+                            <span className="block sm:inline"> Hora de encerrar o expediente e se preparar para amanhã</span>
+                            <span className="absolute top-0 bottom-0 right-0 px-4 py-3">
+                            </span>
+                          </div> : ''
+                      }
+
+
+
                       <div className="grid gap-4 items-center grid-cols-1 sm:grid-cols-1 md:grid-cols-2 mt-16 mb-6">
                         <input
                           type="time"
@@ -215,13 +258,14 @@ export function Home() {
 
                       <div className="w-full border border-gray-200 bg-gray-100 rounded-full h-2.5">
                         <div
-                          className={`${widthProgressBar > 95 ? 'bg-red-500' : 'bg-blue-500'} h-2.5 rounded-full`}
+                          className={`${(widthProgressBar > 0 && lojaAberta == 0) ? 'bg-yellow-400' : (widthProgressBar > 95 ? 'bg-red-500' : 'bg-blue-500')} h-2.5 rounded-full`}
                           style={{ width: `${widthProgressBar}%` }}
                         ></div>
                       </div>
                     </div>
                   </div>
                 </section>
+
               </div>
 
               <div className="grid grid-cols-1 col-span-2 gap-4">
