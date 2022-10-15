@@ -1,7 +1,5 @@
-import { Switch } from '@headlessui/react'
 import { useEffect, useState } from 'react';
 import api from "../services/api";
-
 
 interface ITarifa {
     distancia: number
@@ -11,20 +9,15 @@ interface ITarifa {
 
 export default function FormHorarios() {
 
-    // const [availableToHire, setAvailableToHire] = useState(true)
-    // const [privateAccount, setPrivateAccount] = useState(false)
-    // const [allowCommenting, setAllowCommenting] = useState(true)
-    // const [allowMentions, setAllowMentions] = useState(true)
-    const [listaTarifas, setListaTarifas] = useState<ITarifa[]>([]);
+    const [horaAbertura, setHoraAbertura] = useState();
+    const [horaFechamento, setHoraFechamento] = useState();
 
-
-    function classNames(...classes: string[]) {
-        return classes.filter(Boolean).join(' ')
-    }
 
     useEffect(() => {
-        api.get('/tarifafrete').then((resp) => {
-            setListaTarifas(resp.data);
+        api.get('/empresas/1').then((resp) => {
+            console.log(resp.data);
+            setHoraAbertura(resp.data.hora_inicio);
+            setHoraFechamento(resp.data.hora_fim);
         }).catch((err) => {
         })
     }, []);
@@ -48,11 +41,13 @@ export default function FormHorarios() {
                                     Horário de Abertura
                                 </label>
                                 <input
+                                    readOnly
+                                    value={horaAbertura}
                                     type="time"
                                     name="first-name"
                                     id="first-name"
                                     autoComplete="given-name"
-                                    className="mt-1 block w-full text-center rounded-md border border-gray-300 py-2 px-3 shadow-sm focus:border-sky-500 focus:outline-none focus:ring-sky-500 sm:text-sm"
+                                    className="mt-1 block w-full text-center rounded-md border bg-gray-100 border-gray-300 py-2 px-3 shadow-sm focus:border-sky-500 focus:outline-none focus:ring-sky-500 sm:text-sm"
                                 />
                             </div>
 
@@ -61,18 +56,20 @@ export default function FormHorarios() {
                                     Horário de Fechamento
                                 </label>
                                 <input
+                                    readOnly
                                     type="time"
+                                    value={horaFechamento}
                                     name="last-name"
                                     id="last-name"
                                     autoComplete="family-name"
-                                    className="mt-1 block w-full text-center rounded-md border border-gray-300 py-2 px-3 shadow-sm focus:border-sky-500 focus:outline-none focus:ring-sky-500 sm:text-sm"
+                                    className="mt-1 block w-full text-center rounded-md border bg-gray-100 border-gray-300 py-2 px-3 shadow-sm focus:border-sky-500 focus:outline-none focus:ring-sky-500 sm:text-sm"
                                 />
                             </div>
                             <div>
                                 <button
-                                    className="ml-5 mt-[24px] inline-flex justify-center rounded-md border border-transparent bg-green-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-sky-800 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
+                                    className="mt-[24px] border justify-center rounded-md border-transparent border-gray-300 bg-white py-2 px-4 text-sm font-medium hover:text-white shadow-sm hover:bg-sky-800 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
                                 >
-                                    Salvar
+                                    Editar
                                 </button>
                             </div>
 

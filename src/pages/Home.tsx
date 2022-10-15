@@ -24,32 +24,54 @@ interface ItemProps {
 }
 
 export function Home() {
-  const [listaTarifas, setListaTarifas] = useState<ITarifa[]>([]);
-  const [active, setActive] = useState("all");
-  const [items, setItems] = useState<ItemProps[]>([]);
 
-  const filter = useMemo(() => {
-    if (active === "all") {
-      return items;
-    }
-    if (active === "a") {
-      return items.filter((p) => p.is_active === 1);
-      0;
-    } else {
-      return items.filter((p) => p.is_active === 0);
-    }
-  }, [items, active]);
+  const [listaTarifas, setListaTarifas] = useState<ITarifa[]>([]);
+  const [items, setItems] = useState<ItemProps[]>([]);
+  const [horaAbertura, setHoraAbertura] = useState();
+  const [horaFechamento, setHoraFechamento] = useState();
+  const [widthProgressBar, setWidthProgressBar] = useState(0);
+  const [lojaAberta, setLojaAberta] = useState(0);
+
+
+  function buscarHorarios() {
+    api.get('/empresas/1').then((resp) => {
+      setHoraAbertura(resp.data.hora_inicio);
+      setHoraFechamento(resp.data.hora_fim);
+      let horaAtual = new Date();
+      let expediente = new Date(`2021-01-01T${horaFechamento}:00-03:00`) - new Date(`2021-01-01T${horaAbertura}:00-03:00`);
+      let H = horaAtual.getHours() < 10 ? `0${horaAtual.getHours()}` : horaAtual.getHours();
+      let M = horaAtual.getMinutes() < 10 ? `0${horaAtual.getMinutes()}` : horaAtual.getMinutes();
+      let S = horaAtual.getSeconds() < 10 ? `0${horaAtual.getSeconds()}` : horaAtual.getSeconds();
+      let tempoAberto = new Date(`2021-01-01T${H}:${M}:${S}-03:00`) - new Date(`2021-01-01T${horaAbertura}:00-03:00`);
+      let percent = parseInt((tempoAberto / expediente) * 100);
+      percent = percent > 0 ? percent : 0;
+      // console.log(percent);
+      setWidthProgressBar(percent);
+    }).catch((err) => {
+    })
+  }
+
+
+  function abrirLoja() {
+    api.post(`/empresas/abrir/1`).then((res) => {
+      setLojaAberta(1);
+    }).catch((e) => console.log(e));
+  }
+  function fecharLoja() {
+    api.post(`/empresas/fechar/1`).then((res) => {
+      setLojaAberta(0);
+    }).catch((e) => console.log(e));
+  }
+
 
   const loadCardapio = useCallback(async () => {
-    api
-      .get(`/cardapios/empresa/1`)
-      .then((res) => {
-        if (res.status === 200) {
-          setItems(res.data);
-        }
-      })
-      .catch((e) => console.log(e));
+    api.get(`/cardapios/empresa/1`).then((res) => {
+      if (res.status === 200) {
+        setItems(res.data);
+      }
+    }).catch((e) => console.log(e));
   }, []);
+
 
   const AtualizarLista = () => {
     let tempLista = [];
@@ -62,9 +84,11 @@ export function Home() {
     }).catch((err) => { });
   };
 
+
   useEffect(() => {
     AtualizarLista();
     loadCardapio();
+    buscarHorarios();
   }, []);
 
   return (
@@ -78,16 +102,28 @@ export function Home() {
                 Resumo
               </h1>
               <div>
-                <button
-                  type="button"
-                  className="inline-flex h-10 items-center pr-3 py-1.5 pl-4 border border-transparent text-sm font-medium rounded shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 "
-                >
-                  Iniciar Expediente
+                {lojaAberta == 1 ?
+                  <button
+                  onClick={fecharLoja}
+                    type="button"
+                    className="inline-flex h-10 items-center pr-3 py-1.5 pl-4 border border-transparent text-sm font-medium rounded shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none"
+                  >
+                    Encerrar Expediente
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-5 ml-2">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
                     </svg>
-
-                </button>
+                  </button> :
+                  <button
+                  onClick={abrirLoja}
+                    type="button"
+                    className="inline-flex h-10 items-center pr-3 py-1.5 pl-4 border border-transparent text-sm font-medium rounded shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none"
+                  >
+                    Iniciar Expediente
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-5 ml-2">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
+                    </svg>
+                  </button>
+                }
               </div>
             </div>
           </header>
@@ -101,9 +137,9 @@ export function Home() {
               <div className="grid grid-cols-1 gap-4">
                 <section aria-labelledby="section-1-title">
 
-                    <h2 className="text-lg mb-4 font-medium leading-6 text-white">
-                      Tarifas de Entrega
-                    </h2>
+                  <h2 className="text-lg mb-4 font-medium leading-6 text-white">
+                    Tarifas de Entrega
+                  </h2>
                   <div className="over sm:h-[300px] rounded-lg bg-white shadow p-8">
 
                     <div className="sm:h-[240px] scrollbar-thumb-rounded-full scrollbar-track-rounded-full scrollbar-thin scrollbar-thumb-gray-200 overflow-y-scroll">
@@ -121,7 +157,7 @@ export function Home() {
                                   name="first-name"
                                   id="first-name"
                                   autoComplete="given-name"
-                                  className=" text-center block bg-gray-50 text-gray-600 border border-x-0 border-t-0 border-gray-200 py-2 px-3 border-le focus:outline-none sm:text-sm"
+                                  className="text-center block bg-gray-50 text-gray-600 border border-x-0 border-t-0 border-gray-200 py-2 px-3 border-le focus:outline-none sm:text-sm"
                                   value={`${index == 0
                                     ? 0
                                     : listaTarifas[index - 1].distancia
@@ -154,25 +190,24 @@ export function Home() {
                 </section>
 
                 <section aria-labelledby="section-1-title">
-                      <h2 className="text-lg font-medium leading-6 mb-4 text-gray-900">
-                        Horário de Funcionamento
-                      </h2>
+                  <h2 className="text-lg font-medium leading-6 mb-4 text-gray-900">
+                    Horário de Funcionamento
+                  </h2>
                   <div className="overflow-hidden sm:h-[300px] rounded-lg bg-white shadow">
                     <div className="p-8">
 
                       <div className="grid gap-4 items-center grid-cols-1 sm:grid-cols-1 md:grid-cols-2 mt-16 mb-6">
                         <input
                           type="time"
-                          value={'16:00'}
+                          value={horaAbertura}
                           id="first-name"
                           autoComplete="given-name"
                           className="text-center block bg-gray-100 text-gray-600 rounded-md border border-gray-200 py-2 px-3 border-le shadow-sm focus:border-sky-500 focus:outline-none focus:ring-sky-500 sm:text-sm"
                         />
                         <input
                           type="time"
-                          value={'23:30'}
+                          value={horaFechamento}
                           id="first-name"
-                          placeholder="valor R$"
                           autoComplete="given-name"
                           className="text-center block text-gray-600 bg-gray-100 rounded-md border border-gray-200 py-2 px-3 border-le shadow-sm focus:border-sky-500 focus:outline-none focus:ring-sky-500 sm:text-sm"
                         />
@@ -180,8 +215,8 @@ export function Home() {
 
                       <div className="w-full border border-gray-200 bg-gray-100 rounded-full h-2.5">
                         <div
-                          className="bg-blue-500 h-2.5 rounded-full"
-                          style={{ width: "65%" }}
+                          className={`${widthProgressBar > 95 ? 'bg-red-500' : 'bg-blue-500'} h-2.5 rounded-full`}
+                          style={{ width: `${widthProgressBar}%` }}
                         ></div>
                       </div>
                     </div>
@@ -191,9 +226,9 @@ export function Home() {
 
               <div className="grid grid-cols-1 col-span-2 gap-4">
                 <section aria-labelledby="section-1-title">
-                      <h2 className="text-lg font-medium leading-6 mb-4 text-white">
-                        Promoções Ativas
-                      </h2>
+                  <h2 className="text-lg font-medium leading-6 mb-4 text-white">
+                    Promoções Ativas
+                  </h2>
                   <div className="rounded-lg bg-white shadow mb-10">
                     <div className="p-8">
                       <div className=" sm:h-[593px] scrollbar-thumb-rounded-full scrollbar-track-rounded-full scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-gray-100 overflow-y-scroll">
@@ -202,8 +237,8 @@ export function Home() {
                           role="list"
                           className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
                         >
-                          {filter.length > 0 ? (
-                            filter.map((person) => (
+                          {items.length > 0 ? (
+                            items.map((person) => (
                               <CardCardapioPromocao data={person} />
                             ))
                           ) : (
