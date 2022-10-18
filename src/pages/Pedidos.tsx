@@ -58,19 +58,24 @@ export function Pedidos() {
     })
   },[])
 
-  const socket = io("https://api.mgmenu.com.br");
+  const socket = io("https://api.mgmenu.com.br")
 
-  socket.on("pedidoSolicitado", (data: IPedido) => {
-    if(data.id_empresa === user.id_empresa){
-      loadPedidos()
+  useEffect(() =>{
+    if(socket){
+      socket.on("pedidoSolicitado", (data: IPedido) => {
+        if(data.id_empresa === user.id_empresa){
+          loadPedidos()
+        }
+      })
+    
+      socket.on("statusPedido", (data: IPedido) => {
+        if(data.id_empresa === user.id_empresa){
+          loadPedidos()
+        }
+      })
     }
-  })
-
-  socket.on("statusPedido", (data: IPedido) => {
-    if(data.id_empresa === user.id_empresa){
-      loadPedidos()
-    }
-  })
+    
+  },[socket])
 
   useEffect(() => {
     loadPedidos();
@@ -91,38 +96,24 @@ export function Pedidos() {
     setOpenM3(true);
   }
 
-  function aprovarPedido(id: number) {
+  const aprovarPedido = useCallback((id: number) =>  {
     socket.emit("estabelecimentoMudouStatus", {id_pedido: id, status: 2, id_empresa:user.id_empresa})
-    // api.post('/pedidos/status/' + id, { "status": 2 }).then((resp) => {
-    //   // setListaPedidos(resp.data);
-    // }).catch((err) => {
-    // })
-  }
+    setOpen(false);
+  },[])
 
-  function entregarPedido(id: number) {
+  const entregarPedido = useCallback((id: number) =>  {
     socket.emit("estabelecimentoMudouStatus", {id_pedido: id, status: 3, id_empresa:user.id_empresa})
-    // api.post('/pedidos/status/' + id, { "status": 3 }).then((resp) => {
-    //   // setListaPedidos(resp.data);
-    // }).catch((err) => {
-    // })
-  }
+    setOpenM2(false);
+  },[])
 
-  function finalizarPedido(id: number) {
+  const finalizarPedido = useCallback((id: number) => {
     socket.emit("estabelecimentoMudouStatus", {id_pedido: id, status: 4, id_empresa:user.id_empresa})
-    // api.post('/pedidos/status/' + id, { "status": 4 }).then((resp) => {
-    //   // setListaPedidos(resp.data);
-    // }).catch((err) => {
-    // })
-  }
+    setOpenM3(false);
+  },[])
 
-  function cancelarPedido(id: number) {
+  const cancelarPedido = useCallback((id: number) => {
     socket.emit("estabelecimentoMudouStatus", {id_pedido: id, status: 5, id_empresa:user.id_empresa})
-    // api.post('/pedidos/status/' + id, { "status": 5 }).then((resp) => {
-    //   // setListaPedidos(resp.data);
-    // }).catch((err) => {
-    // })
-  }
-
+  },[])
   return (
     <>
       <Transition.Root show={open} as={Fragment}>
