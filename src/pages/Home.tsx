@@ -27,7 +27,7 @@ interface ItemProps {
 
 export function Home() {
 
-  const {user} = useAuth();
+  const { user } = useAuth();
   const [listaTarifas, setListaTarifas] = useState<ITarifa[]>([]);
   const [items, setItems] = useState<ItemProps[]>([]);
   const [horaAbertura, setHoraAbertura] = useState();
@@ -37,6 +37,7 @@ export function Home() {
 
 
   function buscarHorarios() {
+    console.log('Horário conferido');
     api.get('/empresas/1').then((resp) => {
       setHoraAbertura(resp.data.hora_inicio);
       setHoraFechamento(resp.data.hora_fim);
@@ -48,14 +49,14 @@ export function Home() {
       let tempoAberto = Number(new Date(`2021-01-01T${H}:${M}:${S}-03:00`)) - Number(new Date(`2021-01-01T${horaAbertura}:00-03:00`));
       let percent = (tempoAberto / expediente) * 100;
       percent = percent > 0 ? percent : 0;
-      // console.log(percent);
+
       setWidthProgressBar(percent);
     }).catch((err) => {
     })
   }
 
 
-  function verStatusLoja() {
+  async function verStatusLoja() {
     api.get(`/empresas/1`).then((res) => {
       if (res.data.aberta == 1) {
         setLojaAberta(1);
@@ -66,14 +67,22 @@ export function Home() {
   }
 
 
-  function abrirLoja() {
+  const statusLoja = useMemo(() => {
+    return lojaAberta == 1 ? 1 : 0;
+  }, [lojaAberta])
+
+
+  async function abrirLoja() {
     api.post(`/empresas/abrir/1`).then((res) => {
       setLojaAberta(1);
       toast.info('Expediente Iniciado');
 
     }).catch((e) => console.log(e));
   }
-  function fecharLoja() {
+
+
+
+  async function fecharLoja() {
     api.post(`/empresas/fechar/1`).then((res) => {
       setLojaAberta(0);
       if (widthProgressBar > 0) {
@@ -84,17 +93,16 @@ export function Home() {
     }).catch((e) => console.log(e));
   }
 
-
-  const loadCardapio = useCallback(async () => {
+  async function listaPromocoes() {
     api.get(`/cardapios/empresa/1`).then((res) => {
       if (res.status === 200) {
         setItems(res.data);
       }
     }).catch((e) => console.log(e));
-  }, []);
+  }
 
 
-  const AtualizarLista = () => {
+  const AtualizarLista = async () => {
     let tempLista = [];
     api.get("/tarifafrete").then((resp) => {
       tempLista = resp.data;
@@ -109,7 +117,7 @@ export function Home() {
   useEffect(() => {
     verStatusLoja();
     AtualizarLista();
-    loadCardapio();
+    listaPromocoes();
     buscarHorarios();
   }, []);
 
@@ -222,7 +230,7 @@ export function Home() {
 
 
 
-                      {(widthProgressBar > 0 && lojaAberta) == 0 ?
+                      {(widthProgressBar > 0 && statusLoja) == 0 ?
                         <div className="bg-yellow-100 border mb-[-40px] border-yellow-400 text-yellow-700 px-4 py-3 rounded relative" role="alert">
                           <strong className="font-bold">Hora de abrir!</strong>
                           <span className="block sm:inline"> Inicie seu expediente. Seus clientes esperam por você.</span>
@@ -230,7 +238,7 @@ export function Home() {
                           </span>
                         </div> :
 
-                        (widthProgressBar <= 0 && lojaAberta) == 1 ?
+                        (widthProgressBar <= 0 && statusLoja) == 1 ?
                           <div className="bg-blue-100 border mb-[-40px] border-blue-400 text-blue-700 px-4 py-3 rounded relative" role="alert">
                             <strong className="font-bold">Missão cumprida!</strong>
                             <span className="block sm:inline"> Hora de encerrar o expediente e se preparar para amanhã</span>
@@ -260,7 +268,7 @@ export function Home() {
 
                       <div className="w-full border border-gray-200 bg-gray-100 rounded-full h-2.5">
                         <div
-                          className={`${(widthProgressBar > 0 && lojaAberta == 0) ? 'bg-yellow-400' : (widthProgressBar > 95 ? 'bg-red-500' : 'bg-blue-500')} h-2.5 rounded-full`}
+                          className={`${(widthProgressBar > 0 && statusLoja == 0) ? 'bg-yellow-400' : (widthProgressBar > 95 ? 'bg-red-500' : 'bg-blue-500')} h-2.5 rounded-full`}
                           style={{ width: `${widthProgressBar}%` }}
                         ></div>
                       </div>

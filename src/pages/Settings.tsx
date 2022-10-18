@@ -8,14 +8,14 @@ import {
 import FormPerfil from '../components/FormPerfil'
 import FormTarifas from '../components/FormTarifas'
 import FormHorarios from '../components/FormHorarios'
+import ConfigClients from '../components/ConfigClients'
 
 
-interface ILiNav 
-  {
-    name: string
-    href: string
-    curret: boolean
-  }
+interface ILiNav {
+  name: string
+  href: string
+  curret: boolean
+}
 
 
 
@@ -25,10 +25,7 @@ export function Settings() {
     { name: 'Perfil', href: '#', icon: UserCircleIcon, current: true },
     { name: 'Tarifas', href: 'tarifas', icon: CogIcon, current: false },
     { name: 'Horários', href: 'horarios', icon: CogIcon, current: false },
-    // { name: 'Conta', href: '#', icon: CogIcon, current: false },
-    // { name: 'Password', href: '#', icon: KeyIcon, current: false },
-    // { name: 'Notifications', href: '#', icon: BellIcon, current: false },
-    // { name: 'Billing', href: '#', icon: CreditCardIcon, current: false },
+    { name: 'Clientes', href: 'clientes', icon: CogIcon, current: false },
     // { name: 'Integrations', href: '#', icon: SquaresPlusIcon, current: false },
   ]
 
@@ -45,7 +42,7 @@ export function Settings() {
     // console.log(indexAtual);
     let listaAlterada = sideList;
     listaAlterada.forEach((item, index) => {
-      if(indexAtual == index) {
+      if (indexAtual == index) {
         listaAlterada[index].current = true;
       } else {
         listaAlterada[index].current = false;
@@ -58,7 +55,7 @@ export function Settings() {
     <>
       <div className="min-h-full pb-4">
         <div className="bg-gray-800 pb-32">
-          <Header name="Configurações"/>
+          <Header name="Configurações" />
           <header className="py-10">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
               <h1 className="text-3xl font-bold tracking-tight text-white">Pedidos</h1>
@@ -102,11 +99,13 @@ export function Settings() {
 
                 {
                   indexAtual == 0 ?
-                    <FormPerfil /> : 
-                    indexAtual == 1 ? 
+                    <FormPerfil /> :
+                    indexAtual == 1 ?
                       <FormTarifas /> :
-                        indexAtual == 2 ? 
-                        <FormHorarios /> : ''
+                      indexAtual == 2 ?
+                        <FormHorarios /> :
+                        indexAtual == 3 ?
+                          <ConfigClients /> : ''
                 }
 
               </div>
