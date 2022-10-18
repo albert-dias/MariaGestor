@@ -58,6 +58,7 @@ export function Home() {
 
   async function verStatusLoja() {
     api.get(`/empresas/1`).then((res) => {
+      console.log(res.data.aberta)
       if (res.data.aberta == 1) {
         setLojaAberta(1);
       } else {
@@ -230,7 +231,7 @@ export function Home() {
 
 
 
-                      {(widthProgressBar > 0 && statusLoja) == 0 ?
+                      {(widthProgressBar > 0 && lojaAberta == 0) ?
                         <div className="bg-yellow-100 border mb-[-40px] border-yellow-400 text-yellow-700 px-4 py-3 rounded relative" role="alert">
                           <strong className="font-bold">Hora de abrir!</strong>
                           <span className="block sm:inline"> Inicie seu expediente. Seus clientes esperam por você.</span>
@@ -238,7 +239,7 @@ export function Home() {
                           </span>
                         </div> :
 
-                        (widthProgressBar <= 0 && statusLoja) == 1 ?
+                        (widthProgressBar <= 0 && lojaAberta == 1) ?
                           <div className="bg-blue-100 border mb-[-40px] border-blue-400 text-blue-700 px-4 py-3 rounded relative" role="alert">
                             <strong className="font-bold">Missão cumprida!</strong>
                             <span className="block sm:inline"> Hora de encerrar o expediente e se preparar para amanhã</span>
