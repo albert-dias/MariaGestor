@@ -20,6 +20,13 @@ interface ItemProps {
   id_empresa: number;
 }
 
+interface ICategoria {
+  id: number;
+  nome: string;
+  is_active: number;
+}
+
+
 export function Cardapio() {
   const [active, setActive] = useState("all");
   const [open, setOpen] = useState(false);
@@ -29,7 +36,9 @@ export function Cardapio() {
   const [descricao, setDescricao] = useState("");
   const [valor, setValor] = useState("");
   const [tempoPreparo, setTempoPreparo] = useState("");
+  const [categoria, setCategoria] = useState("");
   const [items, setItems] = useState<ItemProps[]>([]);
+  const [listaCategorias, setListaCategorias] = useState([]);
 
 
   const loadCardapio = useCallback(async () => {
@@ -44,13 +53,23 @@ export function Cardapio() {
   }, []);
 
 
+  async function buscaCategorias() {
+    api.get(`/categorias/`).then((res) => {
+      if (res.status === 200) {
+        setListaCategorias(res.data);
+      }
+    }).catch((e) => console.log(e));
+  }
+
+
+
   const handleRegisterCategory = () => {
-    api.post("/categorias", {nome: nomeCategoria})
-    .then((resp) => {
-      setOpenM2(false);
-      toast.success('Nova Categoria Criada com Sucesso');
-    })
-    .catch((e) => {
+    api.post("/categorias", { nome: nomeCategoria })
+      .then((resp) => {
+        setOpenM2(false);
+        toast.success('Nova Categoria Criada com Sucesso');
+      })
+      .catch((e) => {
         console.log(e);
       })
   }
@@ -58,6 +77,7 @@ export function Cardapio() {
 
   useEffect(() => {
     loadCardapio();
+    buscaCategorias();
   }, []);
 
 
@@ -66,6 +86,7 @@ export function Cardapio() {
       .post("/cardapios", {
         id_empresa: 1,
         nome,
+        id_categoria: categoria,
         descricao,
         valor,
         tempo_preparo: tempoPreparo,
@@ -189,9 +210,10 @@ export function Cardapio() {
                           />
                         </div>
                       </div>
+
                       <div className="mt-4">
                         <label
-                          htmlFor="first-name"
+                          htmlFor="description"
                           className="block text-sm font-medium text-gray-700"
                         >
                           Descrição
@@ -202,15 +224,48 @@ export function Cardapio() {
                             value={descricao}
                             type="text"
                             name="first-name"
-                            id="first-name"
+                            id="description"
                             autoComplete="given-name"
                             className="block w-full h-10 rounded-md border-gray-300 px-2"
                           />
                         </div>
                       </div>
+
+
                       <div className="mt-4">
                         <label
-                          htmlFor="first-name"
+                          htmlFor="select-category"
+                          className="block text-sm font-medium text-gray-700"
+                        >
+                          Categoria
+                        </label>
+                        <div className="mt-1 border border-gray-300 rounded-md">
+                          <select 
+                            name="" 
+                            value={categoria} 
+                            id="select-category" 
+                            className="block w-full h-10 rounded-md border-gray-300 px-2"
+                            onChange={(e) => setCategoria(e.target.value)}
+                          >
+                            <option 
+                              className="text-gray-400"
+                            > 
+                              Selecione uma categoria 
+                            </option>
+                            {
+                              listaCategorias ? listaCategorias.map((cat:ICategoria, index) => {
+                                return(<option value={cat.id}>{cat.nome}</option>);
+                              }) : ''
+                            }
+                          </select>
+                          
+                        </div>
+                      </div>
+                      
+
+                      <div className="mt-4">
+                        <label
+                          htmlFor="valor"
                           className="block text-sm font-medium text-gray-700"
                         >
                           Valor
@@ -222,8 +277,8 @@ export function Cardapio() {
                             }
                             value={maskCurrency(valor)}
                             type="text"
-                            name="first-name"
-                            id="first-name"
+                            name="valor"
+                            id="valor"
                             autoComplete="given-name"
                             className="block w-full h-10 rounded-md border-gray-300 px-2"
                           />

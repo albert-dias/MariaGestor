@@ -23,7 +23,11 @@ interface ItemProps {
   valor: number;
   tempo_preparo: number;
   id_empresa: number;
+  categoria: {
+    id: number;
+  }
 }
+
 
 export function Home() {
 
@@ -293,9 +297,11 @@ export function Home() {
                           className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
                         >
                           {items.length > 0 ? (
-                            items.map((person) => (
-                              <CardCardapioPromocao data={person} />
-                            ))
+                            items.map((item: ItemProps) => {
+                              if(item.categoria?.id == 4) {
+                                return <CardCardapioPromocao data={item} />
+                              }
+                            })
                           ) : (
                             <h1>Nenhum item para essa categoria</h1>
                           )}
