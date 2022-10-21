@@ -281,7 +281,7 @@ export default function FormTarifas() {
 
 
                                             <h2 className="text-lg text-center mb-8 font-medium leading-6 text-gray-600">
-                                                Nova Tarifa
+                                                Editar Tarifa
                                             </h2>
 
 
