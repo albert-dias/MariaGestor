@@ -1,9 +1,7 @@
 import { Dialog, Transition } from "@headlessui/react";
-import { PlusIcon } from '@heroicons/react/20/solid';
-import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 import api from "../services/api";
-import ReactLoading from 'react-loading';
 
 
 interface ITarifa {
@@ -33,9 +31,9 @@ export default function FormTarifas() {
     const [edit_valor, setEdit_valor] = useState(0);
     const [edit_id, setEdit_id] = useState(0);
 
-    let input_novaDistanciaIni = useRef(null);
-    let input_novaDistanciaFin = useRef(null);
-    let input_novoValor = useRef(null);
+    let input_novaDistanciaIni = useRef<HTMLInputElement>(null);
+    let input_novaDistanciaFin = useRef<HTMLInputElement>(null);
+    let input_novoValor = useRef<HTMLInputElement>(null);
 
 
     const AtualizarLista = () => {
@@ -453,6 +451,7 @@ export default function FormTarifas() {
                                         <input
                                             id="nt_distancia"
                                             type="text"
+                                            value={state_inputDistacia}
                                             onChange={e => setState_inputDistacia(e.target.value)}
                                             name="first-name"
                                             autoComplete="given-name"
@@ -465,6 +464,7 @@ export default function FormTarifas() {
                                     <input
                                         type="text"
                                         name="first-name"
+                                        value={state_inputValor}
                                         onChange={e => setState_inputValor(e.target.value)}
                                         ref={input_novoValor}
                                         id="nt_valor"
