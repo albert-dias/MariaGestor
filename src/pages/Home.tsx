@@ -8,10 +8,14 @@ import { useAuth } from "../hook/auth";
 import api from "../services/api";
 
 interface ITarifa {
-  distancia: number;
-  id: number;
-  preco: number;
-  is_active: number;
+ id: number;
+ preco: number;
+ distancia_init: number;
+ distancia_fim: number;
+ is_active: number;
+ created_at: string;
+ updated_at: string;
+ id_empresa: number;
 }
 
 interface ItemProps {
@@ -23,7 +27,11 @@ interface ItemProps {
   valor: number;
   tempo_preparo: number;
   id_empresa: number;
+  categoria: {
+    id: number;
+  }
 }
+
 
 export function Home() {
 
@@ -190,10 +198,7 @@ export function Home() {
                                   id="first-name"
                                   autoComplete="given-name"
                                   className={`text-center block bg-gray-50 text-gray-600 border border-x-0 border-t-0 ${index + 1 == listaTarifas.length ? 'border-b-0' : ''} border-gray-200 py-2 px-3 border-le focus:outline-none sm:text-sm`}
-                                  value={`${index == 0
-                                    ? 0
-                                    : listaTarifas[index - 1].distancia
-                                    } km à ${tarifa.distancia} km`}
+                                  value={`${tarifa.distancia_init} km à ${tarifa.distancia_fim} km`}
                                 />
 
                                 <input
@@ -293,9 +298,11 @@ export function Home() {
                           className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
                         >
                           {items.length > 0 ? (
-                            items.map((person) => (
-                              <CardCardapioPromocao data={person} />
-                            ))
+                            items.map((item: ItemProps) => {
+                              if(item.categoria?.id == 4) {
+                                return <CardCardapioPromocao data={item} />
+                              }
+                            })
                           ) : (
                             <h1>Nenhum item para essa categoria</h1>
                           )}

@@ -48,20 +48,8 @@ export function CardCardapioPromocao({ data }: DataProps) {
               href={``}
               className="relative -mr-px inline-flex w-0 flex-1 items-center justify-center rounded-bl-lg border border-transparent py-4 text-sm font-medium text-gray-700 hover:text-gray-500"
             >
-              <PencilSquareIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
-              <span className="ml-3">Editar</span>
-            </a>
-          </div>
-          <div className="-ml-px flex w-0 flex-1">
-            <a
-              href={``}
-              className="relative inline-flex w-0 flex-1 items-center justify-center rounded-br-lg border border-transparent py-4 text-sm font-medium text-gray-700 hover:text-gray-500"
-            >
-              {data.is_active === 1 ?
-                <XMarkIcon className="h-5 w-5 text-gray-400" aria-hidden="true" /> :
-                <CheckIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
-              }
-              <span className="ml-3">{data.is_active === 1 ? "Desativar" : "Ativar"}</span>
+              {/* <PencilSquareIcon className="h-5 w-5 text-gray-400" aria-hidden="true" /> */}
+              <span className="ml-3">Pausar Promoção</span>
             </a>
           </div>
         </div>
