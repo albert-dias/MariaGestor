@@ -74,7 +74,6 @@ export function Pedidos() {
         }
       })
     }
-    
   },[socket])
 
   useEffect(() => {
