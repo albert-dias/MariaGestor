@@ -80,17 +80,18 @@ export function Pedidos() {
     loadPedidos();
   }, []);
 
-  function abrirModal1(pedido: any) {
+  function abrirModal1(pedido: IPedido) {
+    console.log(pedido)
     setDataM1(pedido);
     setOpen(true);
   }
 
-  function abrirModal2(pedido: any) {
+  function abrirModal2(pedido: IPedido) {
     setDataM2(pedido);
     setOpenM2(true);
   }
 
-  function abrirModal3(pedido: any) {
+  function abrirModal3(pedido: IPedido) {
     setDataM3(pedido);
     setOpenM3(true);
   }
@@ -166,7 +167,7 @@ export function Pedidos() {
                           </div>
                           <div className="w-1/2">
                             <span>Forma de pagamento: </span>
-                            <span>{dataM1.forma_pagamento != undefined && dataM1.forma_pagamento.descricao}</span>
+                            <span>{dataM1.forma_pagamento !== undefined && dataM1.forma_pagamento.descricao}</span>
                           </div>
                         </div>
                       </div>
