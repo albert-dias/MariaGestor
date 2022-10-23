@@ -50,6 +50,8 @@ export function Pedidos() {
   const [dataM1, setDataM1] = useState<IPedido>({} as IPedido);
   const [dataM2, setDataM2] = useState<IPedido>({} as IPedido);
   const [dataM3, setDataM3] = useState<IPedido>({} as IPedido);
+  const audio = new Audio('notification.mp3');
+
 
   const loadPedidos = useCallback(async () => {
     api.get('/pedidos').then((resp) => {
@@ -64,7 +66,8 @@ export function Pedidos() {
     if (socket) {
       socket.on("pedidoSolicitado", (data: IPedido) => {
         if (data.id_empresa === user.id_empresa) {
-          loadPedidos()
+          loadPedidos();
+          audio.play();
         }
       })
 
