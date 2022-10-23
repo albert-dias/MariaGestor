@@ -34,7 +34,7 @@ export interface IPedido {
     }
   ]
   total: number
-  valor_entraga: number;
+  valor_entrega: number;
   status: number;
   created_at: string;
 }
@@ -51,30 +51,30 @@ export function Pedidos() {
   const [dataM2, setDataM2] = useState<IPedido>({} as IPedido);
   const [dataM3, setDataM3] = useState<IPedido>({} as IPedido);
 
-  const loadPedidos = useCallback(async() => {
+  const loadPedidos = useCallback(async () => {
     api.get('/pedidos').then((resp) => {
       setListaPedidos(resp.data);
     }).catch((err) => {
     })
-  },[])
+  }, [])
 
   const socket = io("https://api.mgmenu.com.br")
 
-  useEffect(() =>{
-    if(socket){
+  useEffect(() => {
+    if (socket) {
       socket.on("pedidoSolicitado", (data: IPedido) => {
-        if(data.id_empresa === user.id_empresa){
+        if (data.id_empresa === user.id_empresa) {
           loadPedidos()
         }
       })
-    
+
       socket.on("statusPedido", (data: IPedido) => {
-        if(data.id_empresa === user.id_empresa){
+        if (data.id_empresa === user.id_empresa) {
           loadPedidos()
         }
       })
     }
-  },[socket])
+  }, [socket])
 
   useEffect(() => {
     loadPedidos();
@@ -96,24 +96,24 @@ export function Pedidos() {
     setOpenM3(true);
   }
 
-  const aprovarPedido = useCallback((id: number) =>  {
-    socket.emit("estabelecimentoMudouStatus", {id_pedido: id, status: 2, id_empresa:user.id_empresa})
+  const aprovarPedido = useCallback((id: number) => {
+    socket.emit("estabelecimentoMudouStatus", { id_pedido: id, status: 2, id_empresa: user.id_empresa })
     setOpen(false);
-  },[])
+  }, [])
 
-  const entregarPedido = useCallback((id: number) =>  {
-    socket.emit("estabelecimentoMudouStatus", {id_pedido: id, status: 3, id_empresa:user.id_empresa})
+  const entregarPedido = useCallback((id: number) => {
+    socket.emit("estabelecimentoMudouStatus", { id_pedido: id, status: 3, id_empresa: user.id_empresa })
     setOpenM2(false);
-  },[])
+  }, [])
 
   const finalizarPedido = useCallback((id: number) => {
-    socket.emit("estabelecimentoMudouStatus", {id_pedido: id, status: 4, id_empresa:user.id_empresa})
+    socket.emit("estabelecimentoMudouStatus", { id_pedido: id, status: 4, id_empresa: user.id_empresa })
     setOpenM3(false);
-  },[])
+  }, [])
 
   const cancelarPedido = useCallback((id: number) => {
-    socket.emit("estabelecimentoMudouStatus", {id_pedido: id, status: 5, id_empresa:user.id_empresa})
-  },[])
+    socket.emit("estabelecimentoMudouStatus", { id_pedido: id, status: 5, id_empresa: user.id_empresa })
+  }, [])
   return (
     <>
       <Transition.Root show={open} as={Fragment}>
@@ -167,7 +167,7 @@ export function Pedidos() {
                           </div>
                           <div className="w-1/2">
                             <span>Forma de pagamento: </span>
-                            <span>{dataM1.forma_pagamento !== undefined && dataM1.forma_pagamento.descricao}</span>
+                            <span>{dataM1.forma_pagamento !== undefined && dataM1.forma_pagamento?.descricao}</span>
                           </div>
                         </div>
                       </div>
@@ -217,15 +217,24 @@ export function Pedidos() {
                         <div className="absolute bottom-0 right-0  h-auto w-3/5 sm:w-2/5">
                           <div className="flex justify-between">
                             <span>Total pedido: </span>
-                            <span>{`R$ ${dataM1.total != undefined && dataM1.total.toLocaleString('pt-br', { minimumFractionDigits: 2 })}`}</span>
+                            <span>{Intl.NumberFormat('pt-BR', {
+                                style: 'currency',
+                                currency: 'BRL'
+                            }).format(dataM1.total)}</span>
                           </div>
                           <div className="flex justify-between border-y">
                             <span>Taxa de entrega: </span>
-                            <span>{`R$ ${dataM1.valor_entraga != undefined && dataM1.valor_entraga.toLocaleString('pt-br', { minimumFractionDigits: 2 })}`}</span>
+                            <span>{Intl.NumberFormat('pt-BR', {
+                                style: 'currency',
+                                currency: 'BRL'
+                            }).format(dataM1.valor_entrega)}</span>
                           </div>
                           <div className="flex justify-between">
                             <span>Total a pagar: </span>
-                            <span>{`R$ ${(dataM1.total != undefined && dataM1.total + dataM1.valor_entraga).toLocaleString('pt-br', { minimumFractionDigits: 2 })}`}</span>
+                            <span>{Intl.NumberFormat('pt-BR', {
+                                style: 'currency',
+                                currency: 'BRL'
+                            }).format(dataM1.total + dataM1.valor_entrega)}</span>
                           </div>
                         </div>
                       </div>
@@ -441,15 +450,9 @@ export function Pedidos() {
                 <section aria-labelledby="section-1-title">
                   <div className="overflow-hidden sm:h-[600px] rounded-lg bg-white shadow">
                     <div className="p-6">
-                      {listaPedidos != undefined && listaPedidos.map((pedido, index) => {
-                        if (pedido.status === 1) {
-                          return (
-                            <CardPedidos dadosModal={pedido} key={index} onClick={() => abrirModal1(pedido)} />
-                          );
-                        } else {
-                          return ('');
-                        }
-                      })}
+                      {listaPedidos !== undefined && listaPedidos.filter(p => p.status === 1).map((pedido, index) => (
+                        <CardPedidos dadosModal={pedido} key={index} onClick={() => abrirModal1(pedido)} />
+                      ))}
                     </div>
                   </div>
                 </section>
@@ -461,15 +464,9 @@ export function Pedidos() {
                 <section aria-labelledby="section-1-title">
                   <div className="overflow-hidden sm:h-[600px] rounded-lg bg-white shadow">
                     <div className="p-6">
-                      {listaPedidos.map((pedido, index) => {
-                        if (pedido.status === 2) {
-                          return (
-                            <CardPedidos dadosModal={pedido} key={index} onClick={() => abrirModal2(pedido)} />
-                          );
-                        } else {
-                          return ('');
-                        }
-                      })}
+                      {listaPedidos !== undefined && listaPedidos.filter(p => p.status === 2).map((pedido, index) => (
+                        <CardPedidos dadosModal={pedido} key={index} onClick={() => abrirModal2(pedido)} />
+                      ))}
                     </div>
                   </div>
                 </section>
@@ -479,15 +476,9 @@ export function Pedidos() {
                 <section aria-labelledby="section-1-title">
                   <div className="overflow-hidden sm:h-[600px] rounded-lg bg-white shadow">
                     <div className="p-6">
-                      {listaPedidos.map((pedido, index) => {
-                        if (pedido.status === 3) {
-                          return (
-                            <CardPedidos dadosModal={pedido} key={index} onClick={() => abrirModal3(pedido)} />
-                          );
-                        } else {
-                          return ('');
-                        }
-                      })}
+                      {listaPedidos !== undefined && listaPedidos.filter(p => p.status === 3).map((pedido, index) => (
+                        <CardPedidos dadosModal={pedido} key={index} onClick={() => abrirModal3(pedido)} />
+                      ))}
                     </div>
                   </div>
                 </section>
@@ -507,15 +498,9 @@ export function Pedidos() {
                 <section aria-labelledby="section-1-title">
                   <div className="overflow-hidden sm:h-[600px] rounded-lg bg-white shadow">
                     <div className="p-6">
-                      {listaPedidos.map((pedido, index) => {
-                        if (pedido.status === 4) {
-                          return (
-                            <CardPedidos dadosModal={pedido} key={index} onClick={() => abrirModal1(pedido)} />
-                          );
-                        } else {
-                          return ('');
-                        }
-                      })}
+                      {listaPedidos !== undefined && listaPedidos.filter(p => p.status === 4).map((pedido, index) => (
+                        <CardPedidos dadosModal={pedido} key={index} onClick={() => abrirModal1(pedido)} />
+                      ))}
                     </div>
                   </div>
                 </section>
@@ -525,15 +510,9 @@ export function Pedidos() {
                 <section aria-labelledby="section-1-title">
                   <div className="overflow-hidden sm:h-[600px] rounded-lg bg-white shadow">
                     <div className="p-6">
-                      {listaPedidos.map((pedido, index) => {
-                        if (pedido.status === 5) {
-                          return (
-                            <CardPedidos dadosModal={pedido} key={index} onClick={() => abrirModal3(pedido)} />
-                          );
-                        } else {
-                          return ('');
-                        }
-                      })}
+                      {listaPedidos !== undefined && listaPedidos.filter(p => p.status === 5).map((pedido, index) => (
+                        <CardPedidos dadosModal={pedido} key={index} onClick={() => abrirModal3(pedido)} />
+                      ))}
                     </div>
                   </div>
                 </section>
