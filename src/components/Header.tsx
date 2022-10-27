@@ -23,6 +23,7 @@ export function Header({name}: HeaderProps) {
     { name: 'Home', href: '/home', current: true },
     { name: 'Pedidos', href: '/pedidos', current: false },
     { name: 'Cardápio', href: '/cardapio', current: false },
+    { name: 'PDV', href: '/pdv', current: false },
 
   ]
   const userNavigation = [
@@ -37,6 +38,7 @@ export function Header({name}: HeaderProps) {
     <Disclosure as="nav" className="bg-gray-800">
       {({ open }) => (
         <>
+        {/* <img src={"https://mrdelivery.rdslogic.com/editable/templates/default/img/headerpic02.jpg"} alt="" /> */}
           <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
             <div className="border-b border-gray-700">
               <div className="flex h-16 items-center justify-between px-4 sm:px-0">

@@ -17,11 +17,13 @@
     "react-loading": "^2.0.3",
     "react-router-dom": "^6.3.0",
     "react-toastify": "^9.0.8",
-    "socket.io-client": "^4.5.3"
+    "socket.io-client": "^4.5.3",
+    "styled-components": "^5.3.6"
   },
   "devDependencies": {
     "@types/react": "^18.0.17",
     "@types/react-dom": "^18.0.6",
+    "@types/styled-components": "^5.1.26",
     "@vitejs/plugin-react": "^2.0.1",
     "autoprefixer": "^10.4.8",
     "postcss": "^8.4.16",
