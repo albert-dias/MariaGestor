@@ -24,6 +24,7 @@ export function Header({name}: HeaderProps) {
     { name: 'Pedidos', href: '/pedidos', current: false },
     { name: 'Cardápio', href: '/cardapio', current: false },
     { name: 'PDV', href: '/pdv', current: false },
+    { name: 'Produtos', href: '/produtos', current: false },
 
   ]
   const userNavigation = [
