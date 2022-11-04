@@ -1,12 +1,14 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify';
-import { Notification } from "../components/Notificication";
+import styled from "styled-components";
+import FullLogo from "../components/Assets/FullLogo";
 import { useAuth } from "../hook/auth";
 
 export default function SignIn() {
   const [password, setPassword] = useState('');
   const [document, setDocument] = useState('');
+  const [marginTop, setMarginTop] = useState(0);
   const { signIn, user } = useAuth();
   const navigate = useNavigate();
 
@@ -25,27 +27,32 @@ export default function SignIn() {
   }, [user])
 
 
+  const DivSvg = styled.div`
+    /* background-color: #ff000021;
+    transition: .3s all;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    
+    :hover {
+      transition: 1s;
+      top: 40px; 
+    } */
+  `;
+
   return (
     <>
       <div className="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
-          <img
-            className="mx-auto h-12 w-auto"
-            src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-            alt="Your Company"
-          />
-          <h1 className="mt-6 text-center text-4xl font-bold tracking-tight text-gray-900">Bem vindo ao MariaGestor</h1>
-          <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">Faça o login</h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            Ou{' '}
-            <a href="#" className="font-medium text-indigo-600 hover:text-indigo-500">
-              entre em contato para maiores informações
-            </a>
-          </p>
+          {/* <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-700">Bem vindo ao MariaGestor</h2> */}
+          <DivSvg>
+            <FullLogo />
+          </DivSvg>
+
         </div>
 
-        <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-          <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+        <div className="mt-4 sm:mx-auto sm:w-full sm:max-w-md">
+          <div className="bg-white py-8 px-4 shadow-lg sm:rounded-lg sm:px-10">
+          <h2 className="mt-2 mb-4 text-center text-3xl font-bold tracking-tight text-gray-700">Faça o login</h2>
             <div className="space-y-6">
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700">
@@ -112,6 +119,12 @@ export default function SignIn() {
               </div>
             </div>
           </div>
+          <p className="mt-5 text-center text-sm text-gray-600">
+            Ou{' '}
+            <a href="#" className="font-medium text-indigo-600 hover:text-indigo-500">
+              entre em contato para maiores informações
+            </a>
+          </p>
         </div>
       </div>
     </>

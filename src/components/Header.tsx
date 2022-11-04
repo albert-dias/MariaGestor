@@ -1,10 +1,13 @@
 import { Fragment, useCallback, useMemo, useState } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
-import { ChevronLeftIcon, EnvelopeIcon, FunnelIcon, MagnifyingGlassIcon, PhoneIcon } from '@heroicons/react/20/solid'
-import Logo from '../components/Logo'
+import Logo from './Assets/Logo'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../hook/auth'
+import LogoMG from './Assets/LogoMG'
+import LogoCircle from './Assets/LogoCircle'
+import FullLogo from './Assets/FullLogo'
+import FullLogoHeader from './Assets/FullLogoHeader'
 
 interface HeaderProps{
   name: string;
@@ -23,8 +26,8 @@ export function Header({name}: HeaderProps) {
     { name: 'Home', href: '/home', current: true },
     { name: 'Pedidos', href: '/pedidos', current: false },
     { name: 'Cardápio', href: '/cardapio', current: false },
-    { name: 'PDV', href: '/pdv', current: false },
-    { name: 'Produtos', href: '/produtos', current: false },
+    // { name: 'PDV', href: '/pdv', current: false },
+    // { name: 'Produtos', href: '/produtos', current: false },
 
   ]
   const userNavigation = [
@@ -45,7 +48,9 @@ export function Header({name}: HeaderProps) {
               <div className="flex h-16 items-center justify-between px-4 sm:px-0">
                 <div className="flex items-center">
                   <div className="flex-shrink-0">
-                    <Logo />
+                    {/* <Logo /> */}
+                    <LogoCircle />
+                    {/* <FullLogoHeader/> */}
                   </div>
                   <div className="hidden md:block">
                     <div className="ml-10 flex items-baseline space-x-4">

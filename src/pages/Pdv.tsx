@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import Logo from "../components/Logo";
+import Logo from "../components/Assets/Logo";
 import { useAuth } from "../hook/auth";
 
 export function Pdv() {

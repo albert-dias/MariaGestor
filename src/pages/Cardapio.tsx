@@ -27,6 +27,7 @@ interface ICategoria {
 }
 
 
+
 export function Cardapio() {
   const [active, setActive] = useState("all");
   const [open, setOpen] = useState(false);
@@ -95,6 +96,7 @@ export function Cardapio() {
         console.log(e);
       })
       .finally(() => {
+        buscaCategorias();
         loadCardapio();
         setOpen(false);
       });
@@ -121,6 +123,8 @@ export function Cardapio() {
 
   return (
     <>
+
+
       <Transition.Root show={open} as={Fragment}>
         <Dialog as="div" className="relative z-10" onClose={setOpen}>
           <Transition.Child
@@ -240,28 +244,28 @@ export function Cardapio() {
                           Categoria
                         </label>
                         <div className="mt-1 border border-gray-300 rounded-md">
-                          <select 
-                            name="" 
-                            value={categoria} 
-                            id="select-category" 
+                          <select
+                            name=""
+                            value={categoria}
+                            id="select-category"
                             className="block w-full h-10 rounded-md border-gray-300 px-2"
                             onChange={(e) => setCategoria(e.target.value)}
                           >
-                            <option 
+                            <option
                               className="text-gray-400"
-                            > 
-                              Selecione uma categoria 
+                            >
+                              Selecione uma categoria
                             </option>
                             {
-                              listaCategorias ? listaCategorias.map((cat:ICategoria, index) => {
-                                return(<option value={cat.id}>{cat.nome}</option>);
+                              listaCategorias ? listaCategorias.map((cat: ICategoria, index) => {
+                                return (<option value={cat.id}>{cat.nome}</option>);
                               }) : ''
                             }
                           </select>
-                          
+
                         </div>
                       </div>
-                      
+
 
                       <div className="mt-4">
                         <label
@@ -469,6 +473,7 @@ export function Cardapio() {
             </div>
           </header>
         </div>
+
 
         <main className="-mt-32">
           <div className="mx-auto max-w-7xl max-h-screen px-4 pb-12 sm:px-6 gap-4 lg:grid-cols-3 lg:px-8">
