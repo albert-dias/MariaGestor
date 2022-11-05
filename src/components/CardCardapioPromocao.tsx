@@ -1,4 +1,6 @@
 import { CheckIcon, PencilSquareIcon, XMarkIcon } from '@heroicons/react/20/solid';
+import { useCallback } from 'react';
+import api from '../services/api';
 
 interface ItemProps {
   id: number;
@@ -9,13 +11,43 @@ interface ItemProps {
   valor: number;
   tempo_preparo: number;
   id_empresa: number;
+  categoria: ICategoria;
 }
-
 interface DataProps {
   data: ItemProps;
+  renderLista: (value: string) => void;
+}
+interface ICategoria {
+  id: number;
+  nome: string;
+  is_active: number;
 }
 
-export function CardCardapioPromocao({ data }: DataProps) {
+export function CardCardapioPromocao({ data, renderLista }: DataProps) {
+
+
+  const handleRegisterProduct = useCallback(async () => {
+    const fd = new FormData();
+
+    fd.append("id_empresa", '1')
+    fd.append("nome", data.nome)
+    fd.append("id_categoria", '5')
+    fd.append("descricao", data.descricao)
+    fd.append("valor", data.valor.toString())
+    fd.append("tempo_preparo", data.tempo_preparo.toString());
+
+      api
+        .put(`/cardapios/${data.id}`, fd)
+        .catch((e) => {
+          console.log(e);
+        })
+        .finally(() => {
+          renderLista
+        });
+    
+  }, []);
+
+
   return (
     <li
       key={data.id}
@@ -45,7 +77,8 @@ export function CardCardapioPromocao({ data }: DataProps) {
         <div className="-mt-px flex divide-x divide-gray-200">
           <div className="flex w-0 flex-1">
             <a
-              href={``}
+              href={`#`}
+              onClick={() => handleRegisterProduct()}
               className="relative -mr-px inline-flex w-0 flex-1 items-center justify-center rounded-bl-lg border border-transparent py-4 text-sm font-medium text-gray-700 hover:text-gray-500"
             >
               {/* <PencilSquareIcon className="h-5 w-5 text-gray-400" aria-hidden="true" /> */}
