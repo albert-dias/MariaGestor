@@ -1,7 +1,7 @@
 /* This example requires Tailwind CSS v2.0+ */
 import { Dialog, Transition } from "@headlessui/react";
 import { CheckIcon, PlusIcon } from "@heroicons/react/20/solid";
-import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
+import { ChangeEvent, Fragment, useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import { CardCardapio } from "../components/CardCardapio";
 import { CardPedidos } from "../components/CardPedido";
@@ -40,6 +40,7 @@ export function Cardapio() {
   const [categoria, setCategoria] = useState("");
   const [items, setItems] = useState<ItemProps[]>([]);
   const [listaCategorias, setListaCategorias] = useState([]);
+  const [image, setImage] = useState<File | Blob>();
 
 
   const loadCardapio = useCallback(async () => {
@@ -81,17 +82,27 @@ export function Cardapio() {
     buscaCategorias();
   }, []);
 
+ 
+
+  const handleFotoChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    if(e.target.files){
+      setImage(e.target.files[0]);
+    }
+  }, [])
 
   const handleRegisterProduct = useCallback(async () => {
+    const data = new FormData();
+
+    image !== undefined && data.append("foto", image);
+    data.append("id_empresa", '1')
+    data.append("nome", nome)
+    data.append("id_categoria", categoria)
+    data.append("descricao", descricao)
+    data.append("valor", valor)
+    data.append("tempo_preparo", tempoPreparo);
+    
     api
-      .post("/cardapios", {
-        id_empresa: 1,
-        nome,
-        id_categoria: categoria,
-        descricao,
-        valor,
-        tempo_preparo: tempoPreparo,
-      })
+      .post("/cardapios", data)
       .catch((e) => {
         console.log(e);
       })
@@ -100,7 +111,7 @@ export function Cardapio() {
         loadCardapio();
         setOpen(false);
       });
-  }, [nome, descricao, valor, tempoPreparo]);
+  }, [nome, descricao, valor, tempoPreparo, image]);
 
 
   const handleFilter = useCallback((set: string) => {
@@ -186,6 +197,7 @@ export function Cardapio() {
                                 name="file-upload"
                                 type="file"
                                 className="sr-only"
+                                onChange={handleFotoChange}
                               />
                             </label>
                             <p className="pl-1">ou arraste e solte aqui!</p>
