@@ -41,6 +41,7 @@ export function Cardapio() {
   const [items, setItems] = useState<ItemProps[]>([]);
   const [listaCategorias, setListaCategorias] = useState([]);
   const [image, setImage] = useState<File | Blob>();
+  const [idEdit, setIdEdit] = useState(0);
 
 
   const loadCardapio = useCallback(async () => {
@@ -90,6 +91,21 @@ export function Cardapio() {
     }
   }, [])
 
+  const editItem = useCallback((item: ItemProps) => {
+    setNome(item.nome);
+    setDescricao(descricao)
+    setValor(valor)
+    setTempoPreparo(tempoPreparo)
+    setOpen(true);
+
+  },[
+    nome,
+    categoria,
+    descricao,
+    valor,
+    tempoPreparo
+  ])
+
   const handleRegisterProduct = useCallback(async () => {
     const data = new FormData();
 
@@ -101,7 +117,8 @@ export function Cardapio() {
     data.append("valor", valor)
     data.append("tempo_preparo", tempoPreparo);
     
-    api
+    if(idEdit === 0){
+      api
       .post("/cardapios", data)
       .catch((e) => {
         console.log(e);
@@ -111,7 +128,20 @@ export function Cardapio() {
         loadCardapio();
         setOpen(false);
       });
-  }, [nome, descricao, valor, tempoPreparo, image]);
+    }else{
+      api
+      .put(`/cardapios/${idEdit}`, data)
+      .catch((e) => {
+        console.log(e);
+      })
+      .finally(() => {
+        buscaCategorias();
+        loadCardapio();
+        setIdEdit(0);
+        setOpen(false);
+      });
+    }
+  }, [nome, descricao, valor, tempoPreparo, image, idEdit]);
 
 
   const handleFilter = useCallback((set: string) => {
@@ -130,7 +160,6 @@ export function Cardapio() {
       return items.filter((p) => p.is_active === 0);
     }
   }, [items, active]);
-
 
   return (
     <>
@@ -337,10 +366,6 @@ export function Cardapio() {
         </Dialog>
       </Transition.Root>
 
-
-
-
-
       <Transition.Root show={openM2} as={Fragment}>
         <Dialog as="div" className="relative z-10" onClose={setOpenM2}>
           <Transition.Child
@@ -504,7 +529,7 @@ export function Cardapio() {
                         className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
                       >
                         {filter.length > 0 ? (
-                          filter.map((person) => <CardCardapio data={person} />)
+                          filter.map((person) => <CardCardapio data={person} edit={() =>editItem(person)} setId={setIdEdit}/>)
                         ) : (
                           <h1>Nenhum item para essa categoria</h1>
                         )}
