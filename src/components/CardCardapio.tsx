@@ -291,10 +291,6 @@ export function CardCardapio({ data, edit, setId }: DataProps) {
         </Dialog>
       </Transition.Root>
 
-
-
-
-
       <li
         key={data.id}
         className="col-span-1 flex flex-col divide-y divide-gray-200 rounded-lg bg-slate-50 text-center shadow"
