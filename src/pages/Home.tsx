@@ -102,7 +102,7 @@ export function Home() {
     }).catch((e) => console.log(e));
   }
 
-  async function listaPromocoes() {
+  const listaPromocoes = async () => {
     api.get(`/cardapios/empresa/1`).then((res) => {
       if (res.status === 200) {
         setItems(res.data);
@@ -299,8 +299,8 @@ export function Home() {
                         >
                           {items.length > 0 ? (
                             items.map((item: ItemProps) => {
-                              if(item.categoria?.id == 4) {
-                                return <CardCardapioPromocao data={item} />
+                              if(item.categoria?.id == 1) {
+                                return <CardCardapioPromocao data={item} rederLista={listaPromocoes} />
                               }
                             })
                           ) : (

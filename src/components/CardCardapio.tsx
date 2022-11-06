@@ -20,6 +20,7 @@ interface DataProps {
   data: ItemProps;
   edit: () => void;
   setId: (value: number) => void;
+  setImage: (value: string) => void;
 }
 
 
@@ -30,7 +31,7 @@ interface ICategoria {
 }
 
 
-export function CardCardapio({ data, edit, setId }: DataProps) {
+export function CardCardapio({ data, edit, setId, setImage }: DataProps) {
   const [openEdit, setOpenEdit] = useState(false);
   const [nome, setNome] = useState("");
   const [descricao, setDescricao] = useState("");
@@ -69,19 +70,20 @@ export function CardCardapio({ data, edit, setId }: DataProps) {
   }, [nome, descricao, valor, tempoPreparo]);
 
 
-  function editCardapio(data: ItemProps) {
-    buscaCategorias();
-    setValor(maskPrice((data.valor).toString()));
-    setNome(data.nome);
-    setIdCArdapio(data.id);
-    setDescricao(data.descricao);
-    setTempoPreparo((data.tempo_preparo).toString());
-    setOpenEdit(true);
-  }
+  // function editCardapio(data: ItemProps) {
+  //   buscaCategorias();
+  //   setValor(maskPrice((data.valor).toString()));
+  //   setNome(data.nome);
+  //   setIdCArdapio(data.id);
+  //   setDescricao(data.descricao);
+  //   setTempoPreparo((data.tempo_preparo).toString());
+  //   setOpenEdit(true);
+  // }
 
   const handleEdit = useCallback(() => {
-    edit()
-    setId(data.id)
+    edit();
+    setId(data.id);
+    setImage(data.foto_url);
   },[])
 
 

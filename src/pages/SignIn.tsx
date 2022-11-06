@@ -28,15 +28,10 @@ export default function SignIn() {
 
 
   const DivSvg = styled.div`
-    /* background-color: #ff000021;
-    transition: .3s all;
-    margin-top: 0px;
-    margin-bottom: 0px;
-    
-    :hover {
-      transition: 1s;
-      top: 40px; 
-    } */
+
+    @media only screen and (min-height: 900px) {
+      margin-top: 120px;
+    }
   `;
 
   return (
@@ -45,15 +40,15 @@ export default function SignIn() {
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           {/* <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-700">Bem vindo ao MariaGestor</h2> */}
           <DivSvg>
-            <FullLogo />
           </DivSvg>
 
         </div>
 
         <div className="mt-4 sm:mx-auto sm:w-full sm:max-w-md">
-          <div className="bg-white py-8 px-4 shadow-lg sm:rounded-lg sm:px-10">
-          <h2 className="mt-2 mb-4 text-center text-3xl font-bold tracking-tight text-gray-700">Faça o login</h2>
-            <div className="space-y-6">
+          <div className="bg-white py-8 px-4 shadow-lg hover:shadow-md sm:rounded-lg sm:px-10">
+            <FullLogo />
+            <h5 className="mt-[-10px] mb-4 text-center font-medium tracking-tight text-gray-500">Soluções em comércio</h5>
+            <div className="mt-8 space-y-6">
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700">
                   CPF
@@ -112,14 +107,14 @@ export default function SignIn() {
                 <button
                   type="button"
                   onClick={handleSignIn}
-                  className="flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                  className="flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 mb-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                 >
                   Entrar
                 </button>
               </div>
             </div>
           </div>
-          <p className="mt-5 text-center text-sm text-gray-600">
+          <p className="mt-6 text-center text-sm text-gray-600">
             Ou{' '}
             <a href="#" className="font-medium text-indigo-600 hover:text-indigo-500">
               entre em contato para maiores informações

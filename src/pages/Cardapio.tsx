@@ -18,6 +18,7 @@ interface ItemProps {
   valor: number;
   tempo_preparo: number;
   id_empresa: number;
+  categoria: ICategoria;
 }
 
 interface ICategoria {
@@ -36,6 +37,7 @@ export function Cardapio() {
   const [nomeCategoria, setNomeCategoria] = useState("");
   const [descricao, setDescricao] = useState("");
   const [valor, setValor] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
   const [tempoPreparo, setTempoPreparo] = useState("");
   const [categoria, setCategoria] = useState("");
   const [items, setItems] = useState<ItemProps[]>([]);
@@ -83,22 +85,23 @@ export function Cardapio() {
     buscaCategorias();
   }, []);
 
- 
+
 
   const handleFotoChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    if(e.target.files){
+    if (e.target.files) {
       setImage(e.target.files[0]);
     }
   }, [])
 
   const editItem = useCallback((item: ItemProps) => {
     setNome(item.nome);
-    setDescricao(descricao)
-    setValor(valor)
-    setTempoPreparo(tempoPreparo)
+    setDescricao(item.descricao)
+    setCategoria(item.categoria.id.toString());
+    setValor(item.valor.toString())
+    setTempoPreparo(item.tempo_preparo.toString())
     setOpen(true);
 
-  },[
+  }, [
     nome,
     categoria,
     descricao,
@@ -116,30 +119,31 @@ export function Cardapio() {
     data.append("descricao", descricao)
     data.append("valor", valor)
     data.append("tempo_preparo", tempoPreparo);
-    
-    if(idEdit === 0){
+
+    if (idEdit === 0) {
       api
-      .post("/cardapios", data)
-      .catch((e) => {
-        console.log(e);
-      })
-      .finally(() => {
-        buscaCategorias();
-        loadCardapio();
-        setOpen(false);
-      });
-    }else{
+        .post("/cardapios", data)
+        .catch((e) => {
+          console.log(e);
+        })
+        .finally(() => {
+          buscaCategorias();
+          loadCardapio();
+          setOpen(false);
+        });
+    } else {
       api
-      .put(`/cardapios/${idEdit}`, data)
-      .catch((e) => {
-        console.log(e);
-      })
-      .finally(() => {
-        buscaCategorias();
-        loadCardapio();
-        setIdEdit(0);
-        setOpen(false);
-      });
+        .put(`/cardapios/${idEdit}`, data)
+        .catch((e) => {
+          console.log(e);
+        })
+        .finally(() => {
+          buscaCategorias();
+          loadCardapio();
+          setCategoria('0');
+          setIdEdit(0);
+          setOpen(false);
+        });
     }
   }, [nome, descricao, valor, tempoPreparo, image, idEdit]);
 
@@ -199,43 +203,81 @@ export function Cardapio() {
                       >
                         Imagem do produto
                       </label>
-                      <div className="mt-1 flex justify-center rounded-md border-2 border-dashed border-gray-300 px-6 pt-5 pb-6">
-                        <div className="space-y-1 text-center">
-                          <svg
-                            className="mx-auto h-12 w-12 text-gray-400"
-                            stroke="currentColor"
-                            fill="none"
-                            viewBox="0 0 48 48"
-                            aria-hidden="true"
-                          >
-                            <path
-                              d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
-                              strokeWidth={2}
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            />
-                          </svg>
-                          <div className="flex text-sm text-gray-600">
-                            <label
-                              htmlFor="file-upload"
-                              className="relative cursor-pointer rounded-md bg-slate-50 font-medium text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 hover:text-indigo-500"
-                            >
-                              <span>Procure um arquivo</span>
-                              <input
-                                id="file-upload"
-                                name="file-upload"
-                                type="file"
-                                className="sr-only"
-                                onChange={handleFotoChange}
-                              />
-                            </label>
-                            <p className="pl-1">ou arraste e solte aqui!</p>
-                          </div>
-                          <p className="text-xs text-gray-500">
-                            PNG, JPG, GIF up to 10MB
-                          </p>
-                        </div>
-                      </div>
+
+                      {
+                        imageUrl ?
+                          (
+                            <div className="mt-1 justify-center rounded-md border-2 border-dashed border-gray-300">
+                              <img className="opacity-30" style={{ width: '100%', margin: "auto" }} src={imageUrl} alt="Atual" />
+                              <div className="space-y-1 text-center px-6 pt-5 pb-6 absolute top-32">
+                                <div className="flex text-sm text-gray-600">
+                                  <label
+                                    htmlFor="file-upload"
+                                    className="relative cursor-pointer rounded-md bg-slate-50 font-medium text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 hover:text-indigo-500"
+                                  >
+                                    <span>Procure um arquivo</span>
+                                    <input
+                                      id="file-upload"
+                                      name="file-upload"
+                                      type="file"
+                                      className="sr-only"
+                                      onChange={handleFotoChange}
+                                    />
+                                  </label>
+                                  <p className="pl-1">ou arraste e solte aqui!</p>
+                                </div>
+                                <p className="text-xs text-gray-500">
+                                  PNG, JPG, GIF up to 10MB
+                                </p>
+                              </div>
+                            </div>)
+                          :
+
+                          (
+                            <div className="mt-1 flex justify-center rounded-md border-2 border-dashed border-gray-300 px-6 pt-5 pb-6">
+                              <div className="space-y-1 text-center">
+
+                                <svg
+                                  className="mx-auto h-12 w-12 text-gray-400"
+                                  stroke="currentColor"
+                                  fill="none"
+                                  viewBox="0 0 48 48"
+                                  aria-hidden="true"
+                                >
+                                  <path
+                                    d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
+                                    strokeWidth={2}
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                  />
+                                </svg>
+
+
+                                <div className="flex text-sm text-gray-600">
+                                  <label
+                                    htmlFor="file-upload"
+                                    className="relative cursor-pointer rounded-md bg-slate-50 font-medium text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 hover:text-indigo-500"
+                                  >
+                                    <span>Procure um arquivo</span>
+                                    <input
+                                      id="file-upload"
+                                      name="file-upload"
+                                      type="file"
+                                      className="sr-only"
+                                      onChange={handleFotoChange}
+                                    />
+                                  </label>
+                                  <p className="pl-1">ou arraste e solte aqui!</p>
+                                </div>
+                                <p className="text-xs text-gray-500">
+                                  PNG, JPG, GIF up to 10MB
+                                </p>
+                              </div>
+                            </div>
+                          )
+                      }
+
+
                       <div className="mt-4">
                         <label
                           htmlFor="first-name"
@@ -294,12 +336,17 @@ export function Cardapio() {
                           >
                             <option
                               className="text-gray-400"
+                              value={""}
                             >
                               Selecione uma categoria
                             </option>
                             {
                               listaCategorias ? listaCategorias.map((cat: ICategoria, index) => {
-                                return (<option value={cat.id}>{cat.nome}</option>);
+                                if(categoria == cat.id.toString()) {
+                                  return (<option selected value={cat.id}>{cat.nome}</option>);
+                                } else {
+                                  return (<option value={cat.id}>{cat.nome}</option>);
+                                }
                               }) : ''
                             }
                           </select>
@@ -325,7 +372,7 @@ export function Cardapio() {
                             name="valor"
                             id="valor"
                             autoComplete="given-name"
-                            className="block w-full h-10 rounded-md border-gray-300 px-2"
+                            className="block w-full text-right h-10 rounded-md border-gray-300 px-4"
                           />
                         </div>
                       </div>
@@ -344,7 +391,7 @@ export function Cardapio() {
                             name="first-name"
                             id="first-name"
                             autoComplete="given-name"
-                            className="block w-full h-10 rounded-md border-gray-300 px-2"
+                            className="block w-full h-10 rounded-md border-gray-300 text-right px-4"
                           />
                         </div>
                       </div>
@@ -529,7 +576,7 @@ export function Cardapio() {
                         className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
                       >
                         {filter.length > 0 ? (
-                          filter.map((person) => <CardCardapio data={person} edit={() =>editItem(person)} setId={setIdEdit}/>)
+                          filter.map((person) => <CardCardapio data={person} edit={() => editItem(person)} setImage={setImageUrl} setId={setIdEdit} />)
                         ) : (
                           <h1>Nenhum item para essa categoria</h1>
                         )}
