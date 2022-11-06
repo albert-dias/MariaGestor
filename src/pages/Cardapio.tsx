@@ -50,7 +50,7 @@ export function Cardapio() {
 
   const loadCardapio = useCallback(async () => {
     api
-      .get(`/cardapios/empresa/1`)
+      .get(`/cardapios/empresa/${user.id_empresa}`)
       .then((res) => {
         if (res.status === 200) {
           setItems(res.data);

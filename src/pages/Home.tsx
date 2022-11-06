@@ -2,7 +2,7 @@
 import { PlusIcon } from "@heroicons/react/20/solid";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
-import { CardCardapioPromocao } from "../components/CardCardapioPromocao";
+import { CardCardapioPromocao, ICategoria } from "../components/CardCardapioPromocao";
 import { Header } from "../components/Header";
 import { useAuth } from "../hook/auth";
 import api from "../services/api";
@@ -27,9 +27,7 @@ interface ItemProps {
   valor: number;
   tempo_preparo: number;
   id_empresa: number;
-  categoria: {
-    id: number;
-  }
+  categoria: ICategoria;
 }
 
 
@@ -46,7 +44,7 @@ export function Home() {
 
   function buscarHorarios() {
     console.log('Horário conferido');
-    api.get('/empresas/1').then((resp) => {
+    api.get(`/empresas/${user.id_empresa}`).then((resp) => {
       setHoraAbertura(resp.data.hora_inicio);
       setHoraFechamento(resp.data.hora_fim);
       let horaAtual = new Date();
@@ -65,7 +63,7 @@ export function Home() {
 
 
   async function verStatusLoja() {
-    api.get(`/empresas/1`).then((res) => {
+    api.get(`/empresas/${user.id_empresa}`).then((res) => {
       console.log(res.data.aberta)
       if (res.data.aberta == 1) {
         setLojaAberta(1);
@@ -82,7 +80,7 @@ export function Home() {
 
 
   async function abrirLoja() {
-    api.post(`/empresas/abrir/1`).then((res) => {
+    api.post(`/empresas/abrir/${user.id_empresa}`).then((res) => {
       setLojaAberta(1);
       toast.info('Expediente Iniciado');
 
@@ -92,7 +90,7 @@ export function Home() {
 
 
   async function fecharLoja() {
-    api.post(`/empresas/fechar/1`).then((res) => {
+    api.post(`/empresas/fechar/${user.id_empresa}`).then((res) => {
       setLojaAberta(0);
       if (widthProgressBar > 0) {
         toast.warning('Expediente Pausado');
@@ -103,7 +101,7 @@ export function Home() {
   }
 
   const listaPromocoes = async () => {
-    api.get(`/cardapios/empresa/1`).then((res) => {
+    api.get(`/cardapios/empresa/${user.id_empresa}`).then((res) => {
       if (res.status === 200) {
         setItems(res.data);
       }
@@ -300,7 +298,7 @@ export function Home() {
                           {items.length > 0 ? (
                             items.map((item: ItemProps) => {
                               if(item.categoria?.id == 1) {
-                                return <CardCardapioPromocao data={item} rederLista={listaPromocoes} />
+                                return <CardCardapioPromocao data={item} renderLista={listaPromocoes} />
                               }
                             })
                           ) : (

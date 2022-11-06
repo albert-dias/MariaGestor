@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useAuth } from '../hook/auth';
 import api from "../services/api";
 
 interface ITarifa {
@@ -11,10 +12,11 @@ export default function FormHorarios() {
 
     const [horaAbertura, setHoraAbertura] = useState();
     const [horaFechamento, setHoraFechamento] = useState();
+    const {user} = useAuth()
 
 
     useEffect(() => {
-        api.get('/empresas/1').then((resp) => {
+        api.get(`/empresas/${user.id_empresa}`).then((resp) => {
             // console.log(resp.data);
             setHoraAbertura(resp.data.hora_inicio);
             setHoraFechamento(resp.data.hora_fim);
