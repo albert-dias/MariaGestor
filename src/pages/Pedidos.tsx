@@ -100,8 +100,16 @@ export function Pedidos() {
   }
 
   const aprovarPedido = useCallback((id: number) => {
-    socket.emit("estabelecimentoMudouStatus", { id_pedido: id, status: 2, id_empresa: user.id_empresa })
-    setOpen(false);
+    
+    let content = document.getElementById("contentprint");
+    if(content !== null ){
+      let wd = window.open('about:blank');
+      wd?.document.write(content?.innerHTML);
+      wd?.print();
+      wd?.close();
+    }
+    // socket.emit("estabelecimentoMudouStatus", { id_pedido: id, status: 2, id_empresa: user.id_empresa })
+    // setOpen(false);
   }, [])
 
   const entregarPedido = useCallback((id: number) => {
@@ -245,7 +253,7 @@ export function Pedidos() {
                       <div className="flex w-full justify-between flex-wrap">
                         <button
                           type="submit"
-                          className="flex sm:w-56 sm:mb-0 mb-4 w-full justify-center rounded-md border border-transparent bg-red-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-red-700 "
+                          className="flex sm:w-56 sm:mb-0 mb-4 w-full justify-center rounded-md border border-transparent bg-red-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-red-700"
                         >
                           Cancelar Pedido
                         </button>
@@ -525,6 +533,78 @@ export function Pedidos() {
             {/* /End replace */}
           </div>
         </section>
+      </div>
+
+      <div className="hidden print:block" id="contentprint">
+        <h3 style={{'textAlign':'center'}}>Sushi San</h3>
+    
+        <div style={{fontSize:'12px'}}>
+          <div>Empresa: {user.empresa.nome_fantasia}</div>
+          <div>CNPJ: {user.empresa.cnpj}</div>
+          <div>Telefone:  {` (${user.empresa.contato_wpp.substring(0, 2)}) ${user.empresa.contato_wpp.substring(2, 7)} - ${user.empresa.contato_wpp.substring(7, 11)}`}</div>
+          <div>Endereço: {`${user.empresa.rua}, ${user.empresa.numero} - ${user.empresa.bairro} - ${user.empresa.cidade} / ${user.empresa.estado}`}</div>
+        </div>
+        <hr />
+        <div style={{fontSize:'12px'}}>
+          <div>Nome: {dataM1?.cliente?.nome}</div>
+          <div>Telefone:  {` (${dataM1?.cliente?.telefone.substring(0, 2)}) ${dataM1?.cliente?.telefone.substring(2, 7)} - ${dataM1?.cliente?.telefone.substring(7, 11)}`}</div>
+          <div>Endereço: {`${dataM1?.cliente?.logradouro}, ${dataM1?.cliente?.numero} - ${dataM1?.cliente?.bairro}`}</div>
+        </div>
+        <hr />
+        <table width={'100%'} style={{textAlign:'center', fontSize:'12px'}}>
+          <thead>
+            <tr>
+              <th>Qtd</th>
+              <th>Item</th>
+              <th>Valor</th>
+            </tr>
+          </thead>
+          <tbody>
+            {dataM1.itens && dataM1.itens.map(item => (
+              <tr key={item.id}>
+                <td>{item.quantidade}</td>
+                <td>{item.cardapio.id} - {item.cardapio.nome}</td>
+                <td>{item.cardapio.valor.toLocaleString('pt-br', { minimumFractionDigits: 2 })}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <br />
+
+        <div style={{width:'100%', fontSize:'12px'}}>
+          
+          <div style={{'display':'inline-block','width':'100%'}}>
+            <span style={{'float':'left'}}>Total do Pedido: </span>
+            <span style={{'float':'right'}}>{Intl.NumberFormat('pt-BR', {
+                                                style: 'currency',
+                                                currency: 'BRL'
+                                            }).format(dataM1.total)}</span>
+          </div>
+          <div style={{'display':'inline-block','width':'100%'}}>
+            <span style={{'float':'left'}}>Taxa de entrega: </span>
+            <span style={{'float':'right'}}>{Intl.NumberFormat('pt-BR', {
+                                                style: 'currency',
+                                                currency: 'BRL'
+                                            }).format(dataM1.valor_entrega)}</span>
+          </div>
+          <div style={{'display':'inline-block','width':'100%'}}>
+            <span style={{'float':'left'}}>Total a pagar: </span>
+            <span style={{'float':'right'}}>{Intl.NumberFormat('pt-BR', {
+                                                style: 'currency',
+                                                currency: 'BRL'
+                                            }).format(dataM1.total + dataM1.valor_entrega)}</span>
+          </div>
+          <div style={{'display':'inline-block','width':'100%'}}>
+            <span style={{'float':'left'}}>Forma pagamento: </span>
+            <span style={{'float':'right'}}>{dataM1.forma_pagamento !== undefined && dataM1.forma_pagamento?.descricao}</span>
+          </div>
+        </div>
+        <br />
+        <br />
+        <br />
+        <br />
+        <hr />
+        <p style={{textAlign:'center', fontSize:'12px'}}>Agradecemos pela sua preferência, {dataM1?.cliente?.nome} 😊</p>
       </div>
     </>
   );
