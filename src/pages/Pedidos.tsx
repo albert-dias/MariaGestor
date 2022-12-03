@@ -101,6 +101,9 @@ export function Pedidos() {
 
   const aprovarPedido = useCallback((id: number) => {
     
+    socket.emit("estabelecimentoMudouStatus", { id_pedido: id, status: 2, id_empresa: user.id_empresa })
+    setOpen(false);
+    
     let content = document.getElementById("contentprint");
     if(content !== null ){
       let wd = window.open('about:blank');
@@ -108,8 +111,6 @@ export function Pedidos() {
       wd?.print();
       wd?.close();
     }
-    // socket.emit("estabelecimentoMudouStatus", { id_pedido: id, status: 2, id_empresa: user.id_empresa })
-    // setOpen(false);
   }, [])
 
   const entregarPedido = useCallback((id: number) => {
