@@ -100,8 +100,16 @@ export function Pedidos() {
   }
 
   const aprovarPedido = useCallback((id: number) => {
-    socket.emit("estabelecimentoMudouStatus", { id_pedido: id, status: 2, id_empresa: user.id_empresa })
-    setOpen(false);
+    
+    let content = document.getElementById("contentprint");
+    if(content !== null ){
+      let wd = window.open('about:blank');
+      wd?.document.write(content?.innerHTML);
+      wd?.print();
+      wd?.close();
+    }
+    // socket.emit("estabelecimentoMudouStatus", { id_pedido: id, status: 2, id_empresa: user.id_empresa })
+    // setOpen(false);
   }, [])
 
   const entregarPedido = useCallback((id: number) => {
@@ -245,7 +253,7 @@ export function Pedidos() {
                       <div className="flex w-full justify-between flex-wrap">
                         <button
                           type="submit"
-                          className="flex sm:w-56 sm:mb-0 mb-4 w-full justify-center rounded-md border border-transparent bg-red-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-red-700 "
+                          className="flex sm:w-56 sm:mb-0 mb-4 w-full justify-center rounded-md border border-transparent bg-red-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-red-700"
                         >
                           Cancelar Pedido
                         </button>
@@ -525,6 +533,63 @@ export function Pedidos() {
             {/* /End replace */}
           </div>
         </section>
+      </div>
+
+      <div className="hidden print:block" id="contentprint">
+        <h3 style={{'textAlign':'center'}}>Sushi San</h3>
+        
+        <div>
+          <div>Nome: </div>
+          <div>Telefone: </div>
+          <div>Endereço: </div>
+
+          <div>Pedidos na loja: 30</div>
+          <div>Forma de pagamento: </div>
+        </div>
+        <br />
+        <table width={'100%'} style={{'textAlign':'center'}}>
+          <thead>
+            <tr>
+              <th>Qtd</th>
+              <th>Item</th>
+              <th>Valor</th>
+            </tr>
+          </thead>
+          <tbody>
+            {dataM1.itens && dataM1.itens.map(item => (
+              <tr key={item.id}>
+                <td>{item.quantidade}</td>
+                <td>{item.cardapio.id} - {item.cardapio.nome}</td>
+                <td>{item.cardapio.valor.toLocaleString('pt-br', { minimumFractionDigits: 2 })}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <br />
+        <div style={{'width':'100%'}}>
+          <div style={{'display':'inline-block','width':'100%'}}>
+            <span style={{'float':'left'}}>Total do Pedido: </span>
+            <span style={{'float':'right'}}>{Intl.NumberFormat('pt-BR', {
+                                                style: 'currency',
+                                                currency: 'BRL'
+                                            }).format(dataM1.total)}</span>
+          </div>
+          <div style={{'display':'inline-block','width':'100%'}}>
+            <span style={{'float':'left'}}>Taxa de entrega: </span>
+            <span style={{'float':'right'}}>{Intl.NumberFormat('pt-BR', {
+                                                style: 'currency',
+                                                currency: 'BRL'
+                                            }).format(dataM1.valor_entrega)}</span>
+          </div>
+          <div style={{'display':'inline-block','width':'100%'}}>
+            <span style={{'float':'left'}}>Total a pagar: </span>
+            <span style={{'float':'right'}}>{Intl.NumberFormat('pt-BR', {
+                                                style: 'currency',
+                                                currency: 'BRL'
+                                            }).format(dataM1.total + dataM1.valor_entrega)}</span>
+          </div>
+        </div>
+
       </div>
     </>
   );
