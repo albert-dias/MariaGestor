@@ -26,7 +26,7 @@ export function Header({name}: HeaderProps) {
     { name: 'Home', href: '/home', current: true },
     { name: 'Pedidos', href: '/pedidos', current: false },
     { name: 'Cardápio', href: '/cardapio', current: false },
-    { name: 'PDV', href: '/pdv', current: false },
+    // { name: 'PDV', href: '/pdv', current: false },
     // { name: 'Produtos', href: '/produtos', current: false },
 
   ]
