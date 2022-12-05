@@ -1,6 +1,7 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment, useEffect, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
+import { useAuth } from "../hook/auth";
 import api from "../services/api";
 
 
@@ -30,6 +31,7 @@ export default function FormTarifas() {
     const [edit_distaciaFin, setEdit_distaciaFin] = useState(0);
     const [edit_valor, setEdit_valor] = useState(0);
     const [edit_id, setEdit_id] = useState(0);
+    const { user } = useAuth();
 
     let input_novaDistanciaIni = useRef<HTMLInputElement>(null);
     let input_novaDistanciaFin = useRef<HTMLInputElement>(null);
@@ -69,7 +71,7 @@ export default function FormTarifas() {
         let nova = {
             distancia_init: Number(input_novaDistanciaIni?.current?.value),
             distancia_fim: Number(input_novaDistanciaFin?.current?.value),
-            id_empresa: 1,
+            id_empresa: user.id_empresa,
             preco: Number(input_novoValor?.current?.value)
         }
 
@@ -109,7 +111,7 @@ export default function FormTarifas() {
         let nova = {
             distancia_init: Number(edit_distaciaIni),
             distancia_fim: Number(edit_distaciaFin),
-            id_empresa: 1,
+            id_empresa: user.id_empresa,
             preco: Number(edit_valor)
         }
 

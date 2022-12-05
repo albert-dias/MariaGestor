@@ -1,6 +1,7 @@
 import { Dialog, Transition } from '@headlessui/react';
 import { CheckIcon, PencilSquareIcon, XMarkIcon } from '@heroicons/react/20/solid';
 import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
+import { useAuth } from '../hook/auth';
 import api from '../services/api';
 import { maskCurrency, maskPrice } from '../utils/masks';
 
@@ -40,6 +41,7 @@ export function CardCardapio({ data, edit, setId, setImage }: DataProps) {
   const [categoria, setCategoria] = useState("");
   const [tempoPreparo, setTempoPreparo] = useState("");
   const [listaCategorias, setListaCategorias] = useState([]);
+  const { user } = useAuth()
 
 
   async function buscaCategorias() {
@@ -54,7 +56,7 @@ export function CardCardapio({ data, edit, setId, setImage }: DataProps) {
   const handleUpdateProduct = useCallback(async () => {
     api
       .put("/cardapios/"+idCArdapio, {
-        id_empresa: 1,
+        id_empresa: user.id_empresa,
         nome,
         id_categoria: categoria,
         descricao,
@@ -292,10 +294,6 @@ export function CardCardapio({ data, edit, setId, setImage }: DataProps) {
           </div>
         </Dialog>
       </Transition.Root>
-
-
-
-
 
       <li
         key={data.id}

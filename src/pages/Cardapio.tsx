@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import { CardCardapio } from "../components/CardCardapio";
 import { CardPedidos } from "../components/CardPedido";
 import { Header } from "../components/Header";
+import { useAuth } from "../hook/auth";
 import api from "../services/api";
 import { maskCurrency, maskPrice } from "../utils/masks";
 
@@ -44,11 +45,12 @@ export function Cardapio() {
   const [listaCategorias, setListaCategorias] = useState([]);
   const [image, setImage] = useState<File | Blob>();
   const [idEdit, setIdEdit] = useState(0);
+  const {user} = useAuth();
 
 
   const loadCardapio = useCallback(async () => {
     api
-      .get(`/cardapios/empresa/1`)
+      .get(`/cardapios/empresa/${user.id_empresa}`)
       .then((res) => {
         if (res.status === 200) {
           setItems(res.data);
@@ -113,7 +115,7 @@ export function Cardapio() {
     const data = new FormData();
 
     image !== undefined && data.append("foto", image);
-    data.append("id_empresa", '1')
+    data.append("id_empresa", `${user.id_empresa}`)
     data.append("nome", nome)
     data.append("id_categoria", categoria)
     data.append("descricao", descricao)
@@ -145,7 +147,7 @@ export function Cardapio() {
           setOpen(false);
         });
     }
-  }, [nome, descricao, valor, tempoPreparo, image, idEdit]);
+  }, [nome, descricao, valor, tempoPreparo, image, idEdit, user]);
 
 
   const handleFilter = useCallback((set: string) => {

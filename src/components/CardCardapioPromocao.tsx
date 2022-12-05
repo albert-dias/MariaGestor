@@ -1,5 +1,6 @@
 import { CheckIcon, PencilSquareIcon, XMarkIcon } from '@heroicons/react/20/solid';
 import { useCallback } from 'react';
+import { useAuth } from '../hook/auth';
 import api from '../services/api';
 
 interface ItemProps {
@@ -17,19 +18,19 @@ interface DataProps {
   data: ItemProps;
   renderLista: (value: string) => void;
 }
-interface ICategoria {
+export interface ICategoria {
   id: number;
   nome: string;
   is_active: number;
 }
 
 export function CardCardapioPromocao({ data, renderLista }: DataProps) {
-
+  const {user} = useAuth()
 
   const handleRegisterProduct = useCallback(async () => {
     const fd = new FormData();
 
-    fd.append("id_empresa", '1')
+    fd.append("id_empresa", `${user.id_empresa}`)
     fd.append("nome", data.nome)
     fd.append("id_categoria", '5')
     fd.append("descricao", data.descricao)
