@@ -1,6 +1,29 @@
+import { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 import Logo from "../components/Assets/Logo";
 import { useAuth } from "../hook/auth";
+import api from "../services/api";
+
+
+interface ItemProps {
+  id: number;
+  nome: string;
+  descricao: string;
+  foto_url: string;
+  is_active: number;
+  valor: number;
+  tempo_preparo: number;
+  id_empresa: number;
+  categoria: ICategoria;
+}
+
+interface ICategoria {
+  id: number;
+  nome: string;
+  is_active: number;
+}
+
+
 
 export function Pdv() {
 
@@ -37,9 +60,15 @@ export function Pdv() {
     background-color: #fff;
     border-radius: 10px;
     height: 150px;
-    min-width: 140px;
+    width: 140px;
     margin: 14px;
     padding: 16px;
+    box-shadow: 1px 1px 20px rgba(0,0,0,0.2);
+
+    :hover {
+      box-shadow: 1px 1px 16px rgba(0,0,0,0.01);
+    }
+
     img {
       max-width: 120px;
       margin: auto;
@@ -66,7 +95,7 @@ export function Pdv() {
       height: 90px;
       padding-left: 60px;
       padding-right: 36px;
-      padding-top: 16px;
+      padding-top: 10px;
       display: flex;
       justify-content: space-between;
 
@@ -100,13 +129,19 @@ export function Pdv() {
         div#produtos {
           height: calc(100% - 120px);
           padding: 0px 24px;
-          ul {
-            text-align: center;
-            justify-content: start;
-            margin: 24px auto;
-            list-style: none;
-            display: flex;
-            flex-wrap: wrap;
+          /* background-color: #9c9c9c; */
+          div#div_ul {
+            background-color: #1900ff3e;
+            ul {
+              text-align: center;
+              justify-content: start;
+              margin: 24px auto;
+              list-style: none;
+              display: grid;
+              grid-template-columns: auto;
+              grid-template-rows: auto;
+              grid-area: auto;
+            }
           }
           overflow-y: auto;
         }
@@ -141,7 +176,7 @@ export function Pdv() {
           <ul className="flex">
             {mesas.map((el, index) => {
               return (
-                <li className="mr-2 py-1 px-8">
+                <li className="mr-2 py-[6px] px-8 mb-4">
                   <div>
                     <div className="font-light text-sm">Mesa</div>
                     <div className="text-3xl text-center">{index + 1}</div>
@@ -164,21 +199,23 @@ export function Pdv() {
           </div>
           <div id="main_content">
             <div id="produtos">
-              <ul>
-                {
-                  cards.map((element, index) => {
-                    return (
-                      <ProdCard >
-                        <img src={'https://www.drogariaminasbrasil.com.br/media/product/084/refrigerante-coca-cola-lata-350ml-80c.jpg'} alt="" />
-                        <div>
-                          <h6 className="text-[12px] mb-[-6px] mt-2 font-bold">Coca Lata 300ml</h6>
-                          <span className="text-sm mt-0">R$ 3,99</span>
-                        </div>
-                      </ProdCard>
-                    )
-                  })
-                }
-              </ul>
+              <div id="div_ul">
+                <ul>
+                  {
+                    cards.map((element, index) => {
+                      return (
+                        <ProdCard >
+                          <img src={'https://www.drogariaminasbrasil.com.br/media/product/084/refrigerante-coca-cola-lata-350ml-80c.jpg'} alt="" />
+                          <div>
+                            <h6 className="text-[12px] mb-[-6px] mt-2 font-bold">Coca Lata 300ml</h6>
+                            <span className="text-sm mt-0">R$ 3,99</span>
+                          </div>
+                        </ProdCard>
+                      )
+                    })
+                  }
+                </ul>
+              </div>
 
             </div>
             <div id="resumo">
