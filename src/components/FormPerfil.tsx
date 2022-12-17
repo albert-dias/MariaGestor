@@ -1,6 +1,7 @@
 import { Switch } from '@headlessui/react'
 import { useState } from 'react';
 import { useAuth } from '../hook/auth';
+import ProfilePhoto from './Assets/ProfilePhoto';
 
 
 export default function FormPerfil() {
@@ -44,7 +45,7 @@ export default function FormPerfil() {
                     <div className="flex-grow space-y-6">
                         <div>
                             <label htmlFor="username" className="block text-sm font-medium text-gray-700">
-                                Username
+                                Nome
                             </label>
                             <div className="mt-1 flex rounded-md shadow-sm">
                                 <span className="inline-flex items-center rounded-l-md border border-r-0 border-gray-300 bg-gray-50 px-3 text-gray-500 sm:text-sm">
@@ -71,7 +72,7 @@ export default function FormPerfil() {
                                     readOnly
                                     id="about"
                                     name="about"
-                                    className="mt-1 block w-ful py-2 px-3 rounded-md border border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 sm:text-sm"
+                                    className="mt-1 block w-full py-2 px-3 rounded-md border border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500 sm:text-sm"
                                     defaultValue={''}
                                 />
                             </div>
@@ -83,9 +84,9 @@ export default function FormPerfil() {
 
                     <div className="flex-grow lg:mt-0 lg:ml-6 lg:flex-shrink-0 lg:flex-grow-0">
                         <div className='mt-[-42px]'>
-                            <p className="text-sm font-medium text-gray-700" aria-hidden="true">
+                            {/* <p className="text-sm font-medium text-gray-700" aria-hidden="true">
                                 Photo
-                            </p>
+                            </p> */}
                             <div className="mt-1 lg:hidden">
                                 <div className="flex items-center">
                                     <div
@@ -115,7 +116,8 @@ export default function FormPerfil() {
                             </div>
 
                             <div className="relative hidden overflow-hidden rounded-full lg:block">
-                                <img className="relative h-40 w-40 rounded-full" src={userPlaceholder.imageUrl} alt="" />
+                                {/* <img className="relative h-40 w-40 rounded-full" src={userPlaceholder.imageUrl} alt="" /> */}
+                                <ProfilePhoto/>
                                 <label
                                     htmlFor="desktop-user-photo"
                                     className="absolute inset-0 flex h-full w-full items-center justify-center bg-black bg-opacity-75 text-sm font-medium text-white opacity-0 focus-within:opacity-100 hover:opacity-100"
