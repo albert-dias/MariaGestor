@@ -60,8 +60,8 @@ export function Pdv() {
     background-color: #fff;
     border-radius: 10px;
     height: 150px;
-    width: 140px;
-    margin: 14px;
+    width: 100%;
+    /* margin: 14px; */
     padding: 16px;
     box-shadow: 1px 1px 20px rgba(0,0,0,0.2);
 
@@ -93,19 +93,26 @@ export function Pdv() {
     div#div_mesas {
       width: 100%;
       height: 90px;
-      padding-left: 60px;
+      padding-left: 58px;
       padding-right: 36px;
-      padding-top: 10px;
+      padding-top: 11px;
       display: flex;
       justify-content: space-between;
 
+      
       ul {
         li {
+          margin-right: 10px;
+          cursor: pointer;
+          background-color: #374151;
           border-radius: 8px;
           :hover {
-            background: #ffffff1a;
+            background: #ffffff58;
           }
+        }
 
+        li.disabled {
+          opacity: .3;
         }
       }
     }
@@ -125,25 +132,31 @@ export function Pdv() {
         width: 100%;
         display: grid;
         grid-template-columns: 66% 33% !important;
+
         
         div#produtos {
           height: calc(100% - 120px);
-          padding: 0px 24px;
+          padding-left: 12px;
+          padding-right: 8px;
           /* background-color: #9c9c9c; */
+
           div#div_ul {
-            background-color: #1900ff3e;
+            height: calc(100vh - 188px);
+            margin: 20px;
+            /* background-color: red; */
+            overflow-y: auto;
+
             ul {
               text-align: center;
               justify-content: start;
               margin: 24px auto;
               list-style: none;
               display: grid;
-              grid-template-columns: auto;
-              grid-template-rows: auto;
-              grid-area: auto;
+              grid-column-gap: 22px;
+              grid-row-gap: 26px;
+              grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
             }
           }
-          overflow-y: auto;
         }
 
         div#resumo {
@@ -154,7 +167,21 @@ export function Pdv() {
 
   `;
 
-  let cards = [1, 2, 3, 4, 5, 6, 7];
+
+  const SelectedItem = styled.li`
+      display: grid;
+      grid-template-columns: 60px 1fr 1fr 1fr;
+      height: 40px;
+      margin-top: 2px;
+      border-bottom: 1px solid gray;
+      div.img {
+        img {
+          height: 40px;
+        }
+      }
+    `;
+
+  let cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
   let mesas = [0, 0, 0, 0, 0, 0];
   const { user } = useAuth();
 
@@ -171,12 +198,12 @@ export function Pdv() {
             <Logo />
           </div>
         </header>
-        <div id="div_mesas" className="bg-gray-900">
 
+        <div id="div_mesas" className="bg-gray-900">
           <ul className="flex">
             {mesas.map((el, index) => {
               return (
-                <li className="mr-2 py-[6px] px-8 mb-4">
+                <li className={`py-[4px] px-6 mb-3 ${index > 0 ? 'disabled' : ''}`}>
                   <div>
                     <div className="font-light text-sm">Mesa</div>
                     <div className="text-3xl text-center">{index + 1}</div>
@@ -184,11 +211,19 @@ export function Pdv() {
                 </li>
               )
             })}
+
+            <li className={`py-[4px] px-4 mb-3`} title="Iniciar uma nova mesa">
+              <div>
+                <div className="font-light text-sm">Nova Mesa</div>
+                <div className="text-4xl text-center">+</div>
+              </div>
+            </li>
+
           </ul>
 
           <button
             type="button"
-            className={`mt-2 px-10 inline-flex h-10 items-center py-1.5 border border-transparent text-sm font-medium rounded-lg shadow-sm bg-orange-500  text-white hover:text-gray-900 hover:bg-gray-50 focus:outline-none`}
+            className={`mt-3 px-10 inline-flex h-10 items-center py-1.5 border border-transparent text-sm font-medium rounded-lg shadow-sm bg-orange-500  text-white hover:text-gray-900 hover:bg-gray-50 focus:outline-none`}
           >
             Nova Mesa
           </button>
@@ -226,11 +261,30 @@ export function Pdv() {
                   </div>
                   <hr />
                   <ul>
-                    <li>
-                      <div>
-                        aaaaaaa
+                    <SelectedItem >
+                      <div className="img">
+                        <img src={'https://www.drogariaminasbrasil.com.br/media/product/084/refrigerante-coca-cola-lata-350ml-80c.jpg'} alt="" />
                       </div>
-                    </li>
+                      <div></div>
+                      <div></div>
+                      <div></div>
+                    </SelectedItem>
+                    <SelectedItem >
+                      <div className="img">
+                        <img src={'https://www.drogariaminasbrasil.com.br/media/product/084/refrigerante-coca-cola-lata-350ml-80c.jpg'} alt="" />
+                      </div>
+                      <div></div>
+                      <div></div>
+                      <div></div>
+                    </SelectedItem>
+                    <SelectedItem >
+                      <div className="img">
+                        <img src={'https://www.drogariaminasbrasil.com.br/media/product/084/refrigerante-coca-cola-lata-350ml-80c.jpg'} alt="" />
+                      </div>
+                      <div></div>
+                      <div></div>
+                      <div></div>
+                    </SelectedItem>
                   </ul>
                   <hr />
                   <div className="flex justify-between">
