@@ -171,18 +171,58 @@ export function Pdv() {
   const SelectedItem = styled.li`
       display: grid;
       grid-template-columns: 60px 1fr 1fr 1fr;
-      height: 40px;
+      height: 44px;
       margin-top: 2px;
-      border-bottom: 1px solid gray;
+      border-bottom: 1px solid #dfdfdf;
       div.img {
         img {
-          height: 40px;
+          height: 38px;
+          margin-top: 2px;
         }
+      }
+      div.item {
+        overflow-x: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        strong {
+          font-size: 14px;
+        }
+        span {
+          display: block;
+          margin-top: -6px;
+        }
+        :hover {
+          text-overflow: unset;
+          overflow-x: unset;
+          strong {
+            position: absolute;
+            margin-top: 2px;
+          }
+          span {
+            margin-top: 18px;
+          }
+        }
+      }
+      div.quantidade {
+        text-align: center;
+        input {
+          text-align: right;
+          font-size: 20px;
+          padding-top: 5px;
+          width: 30px;
+        }
+      }
+      div.valorTotal {
+        text-align: right;
+        font-size: 20px;
+        padding-right: 4px;
+        padding-top: 4px;
       }
     `;
 
   let cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
   let mesas = [0, 0, 0, 0, 0, 0];
+  let selecionados = [0, 0];
   const { user } = useAuth();
 
 
@@ -261,30 +301,33 @@ export function Pdv() {
                   </div>
                   <hr />
                   <ul>
-                    <SelectedItem >
-                      <div className="img">
-                        <img src={'https://www.drogariaminasbrasil.com.br/media/product/084/refrigerante-coca-cola-lata-350ml-80c.jpg'} alt="" />
-                      </div>
-                      <div></div>
-                      <div></div>
-                      <div></div>
-                    </SelectedItem>
-                    <SelectedItem >
-                      <div className="img">
-                        <img src={'https://www.drogariaminasbrasil.com.br/media/product/084/refrigerante-coca-cola-lata-350ml-80c.jpg'} alt="" />
-                      </div>
-                      <div></div>
-                      <div></div>
-                      <div></div>
-                    </SelectedItem>
-                    <SelectedItem >
-                      <div className="img">
-                        <img src={'https://www.drogariaminasbrasil.com.br/media/product/084/refrigerante-coca-cola-lata-350ml-80c.jpg'} alt="" />
-                      </div>
-                      <div></div>
-                      <div></div>
-                      <div></div>
-                    </SelectedItem>
+                    {
+
+                      selecionados.map((item, index) => {
+                        return (
+                          <SelectedItem >
+
+                            <div className="img">
+                              <img src={'https://www.drogariaminasbrasil.com.br/media/product/084/refrigerante-coca-cola-lata-350ml-80c.jpg'} alt="" />
+                            </div>
+
+                            <div className="item">
+                              <strong>Cola-Cola 300ml</strong>
+                              <span>3,45</span>
+                            </div>
+
+                            <div className="quantidade">
+                              <input type="text" value={index + 1} />
+                            </div>
+
+                            <div className="valorTotal">
+                              <span>4,30</span>
+                            </div>
+                          </SelectedItem>
+                        )
+                      })
+                    }
+
                   </ul>
                   <hr />
                   <div className="flex justify-between">
