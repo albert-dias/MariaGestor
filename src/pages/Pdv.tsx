@@ -15,6 +15,7 @@ interface ItemProps {
   tempo_preparo: number;
   id_empresa: number;
   categoria: ICategoria;
+  quantidade: number;
 }
 
 interface ICategoria {
@@ -22,10 +23,6 @@ interface ICategoria {
   nome: string;
   is_active: number;
 }
-
-
-
-export function Pdv() {
 
   const FichaPedidos = styled.div`
       padding-right: 34px;
@@ -41,11 +38,14 @@ export function Pdv() {
       padding: 18px;
 
       ul {
-        height: calc(100% - 196px);
+        height: calc(100% - 156px);
+        overflow-y: auto;
+        position: relative;
       }
 
       hr {
-        border: 1px solid #b3b3b3;
+        border: 1px solid #bebebe;
+        margin-bottom: 4px;
       }
 
       button.btn_action {
@@ -64,15 +64,20 @@ export function Pdv() {
     /* margin: 14px; */
     padding: 16px;
     box-shadow: 1px 1px 20px rgba(0,0,0,0.2);
-
     :hover {
       box-shadow: 1px 1px 16px rgba(0,0,0,0.01);
     }
-
     img {
       max-width: 120px;
       margin: auto;
       max-height: 70%;
+    }
+    div {
+      h6 {
+        white-space: nowrap;
+        overflow-x: hidden;
+        text-overflow: ellipsis;
+      }
     }
   `;
 
@@ -167,7 +172,6 @@ export function Pdv() {
 
   `;
 
-
   const SelectedItem = styled.li`
       display: grid;
       grid-template-columns: 60px 1fr 1fr 1fr;
@@ -175,8 +179,10 @@ export function Pdv() {
       margin-top: 2px;
       border-bottom: 1px solid #dfdfdf;
       div.img {
+        overflow-x: hidden;
         img {
           height: 38px;
+          max-width: 38px;
           margin-top: 2px;
         }
       }
@@ -207,23 +213,90 @@ export function Pdv() {
         text-align: center;
         input {
           text-align: right;
-          font-size: 20px;
-          padding-top: 5px;
+          font-size: 18px;
+          padding-top: 8px;
           width: 30px;
         }
       }
       div.valorTotal {
         text-align: right;
-        font-size: 20px;
+        font-size: 18px;
         padding-right: 4px;
-        padding-top: 4px;
+        padding-top: 8px;
       }
     `;
 
-  let cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+
+export function Pdv() {
+
   let mesas = [0, 0, 0, 0, 0, 0];
-  let selecionados = [0, 0];
+
+
   const { user } = useAuth();
+  const [items, setItems] = useState<ItemProps[]>([]);
+  const [itensSelecionados, setItemSelecionado] = useState<ItemProps[]>([]);
+  const [valorProdutos, setValorProdutos] = useState(0);
+  const [valorFinal, setValorFinal] = useState(0);
+
+  const loadCardapio = useCallback(async () => {
+    api
+      .get(`/cardapios/empresa/${user.id_empresa}`)
+      .then((res) => {
+        if (res.status === 200) {
+          // console.log(res.data);
+          setItems(res.data);
+        }
+      })
+      .catch((e) => console.log(e));
+  }, []);
+
+
+
+  useEffect(() => {
+    loadCardapio();
+  }, []);
+
+
+  const selecionarItem = (item: ItemProps) => {
+
+    let temp = itensSelecionados;
+    let existe = false;
+    let tmp_valorProdutos = 0;
+    let tmp_valorFinal = 0;
+    let tmp_descontos = 0;
+
+    item.quantidade = 1;
+
+    if (temp.length) {
+
+      temp.forEach((i) => {
+        if (i.id == item.id) {
+          i.quantidade = (i.quantidade + 1);
+          existe = true;
+        }
+        tmp_valorProdutos = tmp_valorProdutos + (i.valor * i.quantidade);
+      });
+      
+      if (!existe) {
+        tmp_valorProdutos = (tmp_valorProdutos + item.valor);
+        temp.push(item);
+      }
+
+    } else {
+      temp = [];
+      tmp_valorProdutos = item.valor;
+      temp.push(item);
+    }
+
+    tmp_valorFinal = (tmp_valorProdutos - tmp_descontos);
+
+    // console.clear();
+    // console.log(temp)
+
+    setValorFinal(tmp_valorFinal);
+    setValorProdutos(tmp_valorProdutos);
+    setItemSelecionado(temp);
+  }
 
 
   return (
@@ -277,13 +350,13 @@ export function Pdv() {
               <div id="div_ul">
                 <ul>
                   {
-                    cards.map((element, index) => {
+                    items.map((element, index) => {
                       return (
-                        <ProdCard >
-                          <img src={'https://www.drogariaminasbrasil.com.br/media/product/084/refrigerante-coca-cola-lata-350ml-80c.jpg'} alt="" />
+                        <ProdCard onClick={() => selecionarItem(element)} >
+                          <img src={element.foto_url} alt="" />
                           <div>
-                            <h6 className="text-[12px] mb-[-6px] mt-2 font-bold">Coca Lata 300ml</h6>
-                            <span className="text-sm mt-0">R$ 3,99</span>
+                            <h6 className="text-[12px] mb-[-6px] mt-2 font-bold">{element.descricao}</h6>
+                            <span className="text-sm mt-0">{element.valor.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
                           </div>
                         </ProdCard>
                       )
@@ -297,33 +370,34 @@ export function Pdv() {
               <FichaPedidos>
                 <div id="content">
                   <div id="header">
-                    <h4>Resumo da Venda</h4>
+                    <h4><b>Resumo da Venda</b></h4>
                   </div>
                   <hr />
                   <ul>
                     {
 
-                      selecionados.map((item, index) => {
+                      itensSelecionados.map((item, index) => {
                         return (
-                          <SelectedItem >
 
+                          <SelectedItem >
                             <div className="img">
-                              <img src={'https://www.drogariaminasbrasil.com.br/media/product/084/refrigerante-coca-cola-lata-350ml-80c.jpg'} alt="" />
+                              <img src={item.foto_url} alt="" />
                             </div>
 
                             <div className="item">
-                              <strong>Cola-Cola 300ml</strong>
-                              <span>3,45</span>
+                              <strong>{item.descricao}</strong>
+                              <span>{item.valor.toLocaleString('pt-br', { minimumFractionDigits: 2 })}</span>
                             </div>
 
                             <div className="quantidade">
-                              <input type="text" value={index + 1} />
+                              <input type="text" readOnly value={item.quantidade} />
                             </div>
 
                             <div className="valorTotal">
-                              <span>4,30</span>
+                              <span>{(item.valor * item.quantidade).toLocaleString('pt-br', { minimumFractionDigits: 2 })}</span>
                             </div>
                           </SelectedItem>
+
                         )
                       })
                     }
@@ -331,16 +405,16 @@ export function Pdv() {
                   </ul>
                   <hr />
                   <div className="flex justify-between">
-                    <span><strong>subtoal</strong></span>
-                    <span><strong>8888</strong></span>
+                    <span><strong>Subtotal</strong></span>
+                    <span><strong>{valorProdutos.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</strong></span>
                   </div>
                   <div className="flex justify-between">
-                    <span>subtoal</span>
-                    <span>8888</span>
+                    <span>Descontos</span>
+                    <span>- 0,00</span>
                   </div>
                   <div className="flex justify-between">
-                    <span><strong>subtoal</strong></span>
-                    <span><strong>8888</strong></span>
+                    <span><strong>Total</strong></span>
+                    <span><strong>{valorFinal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</strong></span>
                   </div>
 
                   <button
@@ -350,12 +424,12 @@ export function Pdv() {
                     Confirmar
                   </button>
 
-                  <button
+                  {/* <button
                     type="button"
                     className={`mt-2 justify-center btn_action px-10 inline-flex h-10 items-center py-1.5 border border-transparent text-sm font-medium rounded-lg text-green-600 shadow-sm bg-gray-0 border-green-500 hover:text-gray-50 hover:bg-green-500 focus:outline-none`}
                   >
                     Cancelar
-                  </button>
+                  </button> */}
 
                 </div>
               </FichaPedidos>
