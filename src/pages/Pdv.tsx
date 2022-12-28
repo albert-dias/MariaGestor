@@ -24,16 +24,17 @@ interface ICategoria {
   is_active: number;
 }
 
-  const FichaPedidos = styled.div`
+const FichaPedidos = styled.div`
       padding-right: 34px;
-      padding-top: 24px;
+      padding-top: 18px;
       height: 100%;
 
     div#content {
       background-color: #fff;
       border-radius: 10px;
       width: 100%;
-      height: calc(100% - 70px);
+      box-shadow: 1px 1px 20px rgba(0,0,0,0.5);
+      height: calc(100% - 58px);
       margin: 14px;
       padding: 18px;
 
@@ -55,7 +56,7 @@ interface ICategoria {
     }
   `;
 
-  const ProdCard = styled.li`
+const ProdCard = styled.li`
     cursor: pointer;
     background-color: #fff;
     border-radius: 10px;
@@ -63,7 +64,7 @@ interface ICategoria {
     width: 100%;
     /* margin: 14px; */
     padding: 16px;
-    box-shadow: 1px 1px 20px rgba(0,0,0,0.2);
+    box-shadow: 1px 1px 20px rgba(0,0,0,0.5);
     :hover {
       box-shadow: 1px 1px 16px rgba(0,0,0,0.01);
     }
@@ -81,7 +82,7 @@ interface ICategoria {
     }
   `;
 
-  const Main = styled.main`
+const Main = styled.main`
     height: 100vh;
     width: 100vw;
     overflow: hidden;
@@ -97,7 +98,7 @@ interface ICategoria {
 
     div#div_mesas {
       width: 100%;
-      height: 90px;
+      height: 80px;
       padding-left: 58px;
       padding-right: 36px;
       padding-top: 11px;
@@ -113,6 +114,15 @@ interface ICategoria {
           border-radius: 8px;
           :hover {
             background: #ffffff58;
+          }
+          div.rrotulo {
+          }
+          div.numero {
+            margin-top: -4px;
+            font-size: 29px;
+          }
+          div.nova_mesa {
+            margin-top: -6px;
           }
         }
 
@@ -147,7 +157,7 @@ interface ICategoria {
 
           div#div_ul {
             height: calc(100vh - 188px);
-            margin: 20px;
+            margin: 8px 20px;
             /* background-color: red; */
             overflow-y: auto;
 
@@ -172,9 +182,9 @@ interface ICategoria {
 
   `;
 
-  const SelectedItem = styled.li`
+const SelectedItem = styled.li`
       display: grid;
-      grid-template-columns: 60px 1fr 1fr 1fr;
+      grid-template-columns: 60px 1fr 1fr .60fr;
       height: 44px;
       margin-top: 2px;
       border-bottom: 1px solid #dfdfdf;
@@ -196,6 +206,7 @@ interface ICategoria {
         span {
           display: block;
           margin-top: -6px;
+          font-size: 14px;
         }
         :hover {
           text-overflow: unset;
@@ -211,11 +222,43 @@ interface ICategoria {
       }
       div.quantidade {
         text-align: center;
+        margin-top: 2px;
+        :hover {
+          button.btn_count {
+            opacity: 1;
+          }
+          input {
+            border: 1px solid #e2e2e2;
+          }
+        }
+        button.btn_count {
+          background-color: #eeeeee;
+          height: 30px !important;
+          width: 24px;
+          margin-top: 4px;
+          position: absolute;
+          opacity: 0;
+          :hover {
+            background-color: #d6d6d6;
+          }
+          :active {
+            background-color: #b9b9b9;
+          }
+        }
+        button.sub {
+          border-radius: 4px 0px 0px 4px;
+          margin-left: -24px;
+        }
+        button.som {
+          border-radius: 0px 4px 4px 0px;
+        }
         input {
-          text-align: right;
+          text-align: center;
           font-size: 18px;
-          padding-top: 8px;
-          width: 30px;
+          height: 30px;
+          margin-top: 4px;
+          width: 40px;
+          border: 1px solid #ffffff;
         }
       }
       div.valorTotal {
@@ -238,6 +281,7 @@ export function Pdv() {
   const [valorProdutos, setValorProdutos] = useState(0);
   const [valorFinal, setValorFinal] = useState(0);
 
+
   const loadCardapio = useCallback(async () => {
     api
       .get(`/cardapios/empresa/${user.id_empresa}`)
@@ -251,48 +295,84 @@ export function Pdv() {
   }, []);
 
 
-
   useEffect(() => {
     loadCardapio();
   }, []);
 
 
   const selecionarItem = (item: ItemProps) => {
-
     let temp = itensSelecionados;
     let existe = false;
     let tmp_valorProdutos = 0;
     let tmp_valorFinal = 0;
     let tmp_descontos = 0;
 
-    item.quantidade = 1;
-
-    if (temp.length) {
-
-      temp.forEach((i) => {
+    if (temp.length > 0) {
+      temp.forEach((i, index) => {
         if (i.id == item.id) {
           i.quantidade = (i.quantidade + 1);
           existe = true;
         }
         tmp_valorProdutos = tmp_valorProdutos + (i.valor * i.quantidade);
       });
-      
       if (!existe) {
         tmp_valorProdutos = (tmp_valorProdutos + item.valor);
+        item.quantidade = 1;
         temp.push(item);
       }
-
     } else {
       temp = [];
       tmp_valorProdutos = item.valor;
+      item.quantidade = 1;
       temp.push(item);
     }
+    tmp_valorFinal = (tmp_valorProdutos - tmp_descontos);
+    setValorFinal(tmp_valorFinal);
+    setValorProdutos(tmp_valorProdutos);
+    setItemSelecionado(temp);
+  }
+
+
+  const addUnidade = (id: number) => {
+    let temp = itensSelecionados;
+    let tmp_valorProdutos = 0;
+    let tmp_valorFinal = 0;
+    let tmp_descontos = 0;
+    temp.forEach((i) => {
+      if (i.id == id) {
+        i.quantidade = (i.quantidade + 1);
+      }
+      tmp_valorProdutos = tmp_valorProdutos + (i.valor * i.quantidade);
+    });
+    tmp_valorFinal = (tmp_valorProdutos - tmp_descontos);
+    setValorFinal(tmp_valorFinal);
+    setValorProdutos(tmp_valorProdutos);
+    setItemSelecionado(temp);
+  }
+
+
+  const removeUnidade = (id: number) => {
+
+    let temp = itensSelecionados;
+    let tmp_valorProdutos = 0;
+    let tmp_valorFinal = 0;
+    let tmp_descontos = 0;
+
+    temp.forEach((i, index) => {
+      if (i.id == id) {
+        if (i.quantidade == 1) {
+          delete (temp[index]);
+        } else {
+          i.quantidade = (i.quantidade - 1);
+        }
+      }
+    });
+
+    temp.forEach((i, index) => {
+      tmp_valorProdutos = tmp_valorProdutos + (i.valor * i.quantidade);
+    });
 
     tmp_valorFinal = (tmp_valorProdutos - tmp_descontos);
-
-    // console.clear();
-    // console.log(temp)
-
     setValorFinal(tmp_valorFinal);
     setValorProdutos(tmp_valorProdutos);
     setItemSelecionado(temp);
@@ -317,10 +397,8 @@ export function Pdv() {
             {mesas.map((el, index) => {
               return (
                 <li className={`py-[4px] px-6 mb-3 ${index > 0 ? 'disabled' : ''}`}>
-                  <div>
-                    <div className="font-light text-sm">Mesa</div>
-                    <div className="text-3xl text-center">{index + 1}</div>
-                  </div>
+                  <div className="font-light text-sm rotulo">Mesa</div>
+                  <div className="text-3xl text-center numero">{index + 1}</div>
                 </li>
               )
             })}
@@ -328,7 +406,7 @@ export function Pdv() {
             <li className={`py-[4px] px-4 mb-3`} title="Iniciar uma nova mesa">
               <div>
                 <div className="font-light text-sm">Nova Mesa</div>
-                <div className="text-4xl text-center">+</div>
+                <div className="text-4xl text-center nova_mesa">+</div>
               </div>
             </li>
 
@@ -390,7 +468,9 @@ export function Pdv() {
                             </div>
 
                             <div className="quantidade">
+                              <button className="btn_count sub" onClick={() => removeUnidade(item.id)} >-</button>
                               <input type="text" readOnly value={item.quantidade} />
+                              <button className="btn_count som" onClick={() => addUnidade(item.id)} >+</button>
                             </div>
 
                             <div className="valorTotal">
