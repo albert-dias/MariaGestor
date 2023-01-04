@@ -18,6 +18,10 @@ interface ItemProps {
   quantidade: number;
 }
 
+interface IMesa {
+  itens: ItemProps[];
+}
+
 interface ICategoria {
   id: number;
   nome: string;
@@ -33,7 +37,7 @@ const FichaPedidos = styled.div`
       background-color: #fff;
       border-radius: 10px;
       width: 100%;
-      box-shadow: 1px 1px 20px rgba(0,0,0,0.5);
+      box-shadow: 1px 1px 20px rgba(0,0,0,0.3);
       height: calc(100% - 58px);
       margin: 14px;
       padding: 18px;
@@ -64,7 +68,7 @@ const ProdCard = styled.li`
     width: 100%;
     /* margin: 14px; */
     padding: 16px;
-    box-shadow: 1px 1px 20px rgba(0,0,0,0.5);
+    box-shadow: 1px 1px 20px rgba(0,0,0,0.3);
     :hover {
       box-shadow: 1px 1px 16px rgba(0,0,0,0.01);
     }
@@ -272,15 +276,15 @@ const SelectedItem = styled.li`
 
 export function Pdv() {
 
-  let mesas = [0, 0, 0, 0, 0, 0];
-
+  // const mesas = [0,0,0,0,0,0];
 
   const { user } = useAuth();
   const [items, setItems] = useState<ItemProps[]>([]);
   const [itensSelecionados, setItemSelecionado] = useState<ItemProps[]>([]);
   const [valorProdutos, setValorProdutos] = useState(0);
   const [valorFinal, setValorFinal] = useState(0);
-
+  const [mesas, setMesas] = useState<ItemProps[][]>([]);
+  const [itensNovaMesa, setItemNovaMesa] = useState<ItemProps[]>([]);
 
   const loadCardapio = useCallback(async () => {
     api
@@ -379,6 +383,14 @@ export function Pdv() {
   }
 
 
+  const novaMesa = () => {
+
+    let temp_mesa = mesas;
+    temp_mesa.push(itensNovaMesa);
+
+    setMesas(temp_mesa);
+  }
+
   return (
     <>
       <Main className="bg-gray-700 text-white">
@@ -404,7 +416,7 @@ export function Pdv() {
             })}
 
             <li className={`py-[4px] px-4 mb-3`} title="Iniciar uma nova mesa">
-              <div>
+              <div onClick={novaMesa}>
                 <div className="font-light text-sm">Nova Mesa</div>
                 <div className="text-4xl text-center nova_mesa">+</div>
               </div>
