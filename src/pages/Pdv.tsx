@@ -20,6 +20,8 @@ interface ItemProps {
 
 interface IMesa {
   itens: ItemProps[];
+  selected: boolean;
+  status: number;
 }
 
 interface ICategoria {
@@ -115,6 +117,7 @@ const Main = styled.main`
           margin-right: 10px;
           cursor: pointer;
           background-color: #374151;
+          opacity: .3;
           border-radius: 8px;
           :hover {
             background: #ffffff58;
@@ -130,8 +133,8 @@ const Main = styled.main`
           }
         }
 
-        li.disabled {
-          opacity: .3;
+        li.selected {
+          opacity: 1;
         }
       }
     }
@@ -276,22 +279,20 @@ const SelectedItem = styled.li`
 
 export function Pdv() {
 
-  // const mesas = [0,0,0,0,0,0];
-
   const { user } = useAuth();
   const [items, setItems] = useState<ItemProps[]>([]);
   const [itensSelecionados, setItemSelecionado] = useState<ItemProps[]>([]);
   const [valorProdutos, setValorProdutos] = useState(0);
   const [valorFinal, setValorFinal] = useState(0);
-  const [mesas, setMesas] = useState<ItemProps[][]>([]);
-  const [itensNovaMesa, setItemNovaMesa] = useState<ItemProps[]>([]);
+  const [mesas, setMesas] = useState<IMesa[]>([]);
+  var qtdMesas = 0;
+  // const [novaMesa] = useState<IMesa>({itens:[], selected: false, status: 0} as IMesa);
 
   const loadCardapio = useCallback(async () => {
     api
       .get(`/cardapios/empresa/${user.id_empresa}`)
       .then((res) => {
         if (res.status === 200) {
-          // console.log(res.data);
           setItems(res.data);
         }
       })
@@ -301,7 +302,71 @@ export function Pdv() {
 
   useEffect(() => {
     loadCardapio();
+    iniciarPDV()
   }, []);
+
+
+  const handleNovaMesa = () => {
+    qtdMesas++;
+    let novaMesa = { itens: [], selected: true, status: 0 } as IMesa;
+    let temp_mesas = mesas;
+
+    temp_mesas.forEach((item, index) => {
+      item.selected = false;
+    });
+
+    temp_mesas[`${qtdMesas}`] = novaMesa;
+
+    setMesas(temp_mesas);
+    setItemSelecionado([]);
+  };
+
+
+  const deletarMesa = () => {
+    mesas.forEach((el, i) => {
+      if (el.selected) {
+        delete(mesas[i]);
+      }
+    })
+    mesas
+    setMesas(mesas);
+  }
+
+
+  const iniciarPDV = () => {
+    if (mesas.length < 1) {
+      handleNovaMesa();
+    }
+  }
+
+
+  const atualizaMesa = () => {
+    let tempMesas = mesas;
+
+    tempMesas.forEach((element) => {
+      if (element.selected) {
+        element.itens = itensSelecionados;
+      }
+    })
+
+    setMesas(tempMesas);
+  }
+
+
+  const mudarMesa = (indexItem: number) => {
+    let temp_mesas = mesas;
+
+    temp_mesas.forEach((item, index) => {
+      if (index == indexItem) {
+        item.selected = true;
+        setItemSelecionado(item.itens);
+      } else {
+        item.selected = false;
+      }
+    });
+
+    setMesas([...temp_mesas, ...[]]);
+  };
 
 
   const selecionarItem = (item: ItemProps) => {
@@ -334,6 +399,7 @@ export function Pdv() {
     setValorFinal(tmp_valorFinal);
     setValorProdutos(tmp_valorProdutos);
     setItemSelecionado(temp);
+    atualizaMesa();
   }
 
 
@@ -383,14 +449,6 @@ export function Pdv() {
   }
 
 
-  const novaMesa = () => {
-
-    let temp_mesa = mesas;
-    temp_mesa.push(itensNovaMesa);
-
-    setMesas(temp_mesa);
-  }
-
   return (
     <>
       <Main className="bg-gray-700 text-white">
@@ -408,15 +466,15 @@ export function Pdv() {
           <ul className="flex">
             {mesas.map((el, index) => {
               return (
-                <li className={`py-[4px] px-6 mb-3 ${index > 0 ? 'disabled' : ''}`}>
+                <li key={index} onClick={() => { mudarMesa(index) }} className={`py-[4px] px-6 mb-3 ${el.selected ? 'selected' : ''}`}>
                   <div className="font-light text-sm rotulo">Mesa</div>
                   <div className="text-3xl text-center numero">{index + 1}</div>
                 </li>
               )
             })}
 
-            <li className={`py-[4px] px-4 mb-3`} title="Iniciar uma nova mesa">
-              <div onClick={novaMesa}>
+            <li onClick={() => { handleNovaMesa() }} className={`py-[4px] px-4 mb-3 selected`} title="Iniciar uma nova mesa">
+              <div>
                 <div className="font-light text-sm">Nova Mesa</div>
                 <div className="text-4xl text-center nova_mesa">+</div>
               </div>
@@ -425,10 +483,11 @@ export function Pdv() {
           </ul>
 
           <button
+          onClick={() => deletarMesa()}
             type="button"
-            className={`mt-3 px-10 inline-flex h-10 items-center py-1.5 border border-transparent text-sm font-medium rounded-lg shadow-sm bg-orange-500  text-white hover:text-gray-900 hover:bg-gray-50 focus:outline-none`}
+            className={`mt-3 px-4 inline-flex h-10 items-center py-1.5 border border-transparent text-sm font-medium rounded-lg shadow-sm bg-red-500  text-white hover:bg-red-600 focus:outline-none`}
           >
-            Nova Mesa
+            Cancelar Venda
           </button>
 
         </div>
